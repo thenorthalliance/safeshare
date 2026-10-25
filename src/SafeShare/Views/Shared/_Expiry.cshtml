@@ -1,0 +1,3 @@
+@model DateTime?
+@* Live countdown to the auto-burn timer. Stored timestamps are UTC (SQLite returns them without a Kind). Kept on one line: any whitespace here shows up as a space before the punctuation that follows the partial. *@
+@if (Model is DateTime at) {<span class="countdown">in <time datetime="@at.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")" data-countdown>@at.ToString("yyyy-MM-dd HH:mm") UTC</time></span>} else {<span class="muted">never (no timer set)</span>}

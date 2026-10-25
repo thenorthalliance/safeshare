@@ -1,0 +1,104 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Share a secret";
+}
+<section class="panel narrow" id="create" data-max-bytes="@(Model.MaxSecretSizeKb * 1024)">
+    <form id="create-form">
+        <h1>Share a secret</h1>
+
+        <textarea id="secret-text" class="editor" spellcheck="false" autocomplete="off" aria-label="Secret"
+                  placeholder="Password, API key, connection string, private note…" autofocus required></textarea>
+        <div class="muted small">Max @Model.MaxSecretSizeKb KB · Ctrl+Enter to create</div>
+
+        <div class="options">
+            <label>
+                Passphrase (optional)
+                <input id="secret-passphrase" type="password" class="input" autocomplete="new-password" />
+            </label>
+        </div>
+
+        <partial name="_TimerField" model="Model.Timer" />
+
+        <div class="error" id="create-error" hidden></div>
+        <button type="submit" class="btn primary" id="create-btn">Create secret link</button>
+    </form>
+
+    <div id="create-result" hidden>
+        <h1>Secret link created</h1>
+
+        <div class="share-options">
+            <div class="share-option">
+                <h3>Option 1: one link</h3>
+                <label class="field">
+                    Link with key
+                    <span class="copy-row">
+                        <input class="input" id="share-url" readonly />
+                        <button type="button" class="btn" data-copy="#share-url">Copy</button>
+                    </span>
+                </label>
+            </div>
+
+            <div class="share-option">
+                <h3>Option 2: link and key separately</h3>
+                <label class="field">
+                    Link without key
+                    <span class="copy-row">
+                        <input class="input" id="share-link-only" readonly />
+                        <button type="button" class="btn" data-copy="#share-link-only">Copy</button>
+                    </span>
+                </label>
+                <label class="field">
+                    Key
+                    <span class="copy-row">
+                        <input class="input" id="share-key" readonly />
+                        <button type="button" class="btn" data-copy="#share-key">Copy</button>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <label class="field">
+            Private link to destroy the secret early
+            <span class="copy-row">
+                <input class="input" id="manage-url" readonly />
+                <button type="button" class="btn" data-copy="#manage-url">Copy</button>
+            </span>
+        </label>
+
+        <ul class="facts">
+            <li id="result-expires-row">Auto-burns <span class="countdown">in <time id="result-expires" data-countdown></time></span>.</li>
+            <li id="result-no-timer" hidden>No auto-burn timer.</li>
+            <li id="result-passphrase" hidden>Send the passphrase through a different channel.</li>
+            <li>Don't open the link yourself: it works only once.</li>
+        </ul>
+
+        <a class="btn" href="/share">Create another</a>
+    </div>
+</section>
+
+@section Explain {
+    <h2>Share a secret</h2>
+    <ol>
+        <li>Your browser encrypts the text with a random key. Only the encrypted version is uploaded, so the server can't read it.</li>
+        <li>The key goes into the link after the <code>#</code>. Browsers never send that part to the server.</li>
+        <li>The link works <strong>once</strong>. Opening it shows a confirmation page first, so chat link previews can't use it up.</li>
+    </ol>
+
+    <h3>Two ways to send it</h3>
+    <p><strong>One link</strong> is the simplest: anyone who gets it can read the secret once.</p>
+    <p><strong>Link and key separately</strong> is safer. Send the link by e-mail and the key over chat, for example. Someone who intercepts only one of them gets nothing.</p>
+
+    <h3>Options</h3>
+    <ul>
+        <li><strong>Passphrase:</strong> an extra password the recipient must type. Tell them through another channel. After 5 wrong attempts the secret is destroyed.</li>
+        <li><strong>Auto-burn timer:</strong> the secret is deleted when it runs out, even if nobody opened it. Untick it to keep the secret until it is read.</li>
+        <li><strong>Destroy link:</strong> lets you delete the secret before it is read.</li>
+    </ul>
+
+    <p>The key isn't stored anywhere. If you lose the link, nobody can read the secret.</p>
+    <p>Sending to someone outside the company? <a href="/">Ask them to request it</a> instead. Nothing secret then travels over e-mail.</p>
+}
+
+@section Scripts {
+    <script src="~/js/share.js" asp-append-version="true"></script>
+}

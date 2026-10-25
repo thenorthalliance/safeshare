@@ -1,0 +1,28 @@
+# Portainer stack (Git repository deployment): app only.
+# Use this when you already have a reverse proxy with HTTPS (Nginx Proxy Manager, Traefik, …)
+# and point it at http://<docker-host>:${APP_PORT:-8080}.
+#
+# Portainer: Stacks → Add stack → Repository → Compose path: deploy/stack.yml
+# Optional stack environment variables: APP_PORT, SITE_NAME, ALLOW_NO_EXPIRY, DEFAULT_LIFETIME_MINUTES, MAX_LIFETIME_MINUTES
+
+services:
+  safeshare:
+    build:
+      context: ..
+    image: safeshare:latest
+    container_name: safeshare
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      - safeshare-data:/data
+    environment:
+      # Use the client IP from the proxy's X-Forwarded-For header, otherwise all users share one rate limit.
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      SafeShare__SiteName: "${SITE_NAME:-SafeShare}"
+      SafeShare__AllowNoExpiry: "${ALLOW_NO_EXPIRY:-true}"
+      SafeShare__DefaultLifetimeMinutes: "${DEFAULT_LIFETIME_MINUTES:-1440}"
+      SafeShare__MaxLifetimeMinutes: "${MAX_LIFETIME_MINUTES:-43200}"
+
+volumes:
+  safeshare-data:

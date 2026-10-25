@@ -1,0 +1,62 @@
+@model SafeShareOptions
+@{
+    ViewData["Title"] = "How it works";
+}
+<section class="panel narrow prose">
+    <h1>How @Model.SiteName works</h1>
+    <p>
+        All encryption and decryption happens in your browser. The server stores only ciphertext and can't read any
+        secret. Neither can anyone who copies its database, backups or logs.
+    </p>
+
+    <h2>Share a secret</h2>
+    <p>Use this when <strong>you</strong> have the secret and a reasonably trusted way to reach the recipient.</p>
+    <ol>
+        <li>Your browser generates a random 256-bit key and encrypts the text with AES-256-GCM.
+            An optional passphrase is stretched with PBKDF2 (600,000 iterations) and mixed in with HKDF.</li>
+        <li>The key goes after the <code>#</code> in the link. Browsers never send that part to the server.</li>
+        <li>Send one link, or send the link and the key through two different channels (e.g. e-mail + chat).</li>
+        <li>Opening the link shows a confirmation page first, so chat link previews can't use up the secret.
+            The server hands over the ciphertext once and deletes it in the same step.</li>
+    </ol>
+
+    <h2>Request a secret</h2>
+    <p>
+        Use this when someone outside your organisation (a client or a vendor) has to send <strong>you</strong> a secret
+        and you have no channel you both trust.
+    </p>
+    <ol>
+        <li>Your browser creates an ECDH P-256 key pair. The private key is stored in this browser and can't be exported.
+            The server only receives the public key.</li>
+        <li>You send the request link. It contains nothing secret, so plain e-mail is fine.</li>
+        <li>Both of you see the same <strong>security code</strong> (a fingerprint of your public key). Read it to each other over
+            the phone or a video call. If the codes match, nobody has swapped the key on the way.</li>
+        <li>The sender's browser encrypts the secret to your public key. Only your browser can decrypt it, once.
+            After that, the ciphertext is deleted from the server and the private key from your browser.</li>
+    </ol>
+
+    <h2>Auto-burn timer</h2>
+    <ul>
+        <li>Secrets and requests can burn automatically after a time you choose, whether or not they have been opened.
+            The maximum is @(Model.MaxLifetimeMinutes) minutes.</li>
+        @if (Model.AllowNoExpiry)
+        {
+            <li>The timer is optional. Without one, an item lives until it is opened, cancelled or destroyed.</li>
+        }
+        else
+        {
+            <li>On this server a timer is always required.</li>
+        }
+        <li>For requests, both sides can set a timer. The shorter one applies.</li>
+    </ul>
+
+    <h2>Limits</h2>
+    <ul>
+        <li>Anyone who gets a full share link before the recipient opens it can read the secret. For anything sensitive,
+            send the link and key separately, or use a request.</li>
+        <li>After @Model.MaxFailedAttempts wrong key or passphrase attempts, a shared secret is destroyed. Someone with only the
+            link can't read it, but can destroy it this way. The recipient will notice and should tell you.</li>
+        <li>A request can only be opened in the browser where it was created. Private windows and clearing site data lose the key.</li>
+        <li>Someone who controls the server could change the JavaScript it serves. This applies to every browser-based encryption tool.</li>
+    </ul>
+</section>

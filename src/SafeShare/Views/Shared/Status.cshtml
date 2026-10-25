@@ -1,0 +1,17 @@
+@model int
+@{
+    var (heading, text) = Model switch
+    {
+        404 => ("Not found", "There is nothing at this address."),
+        429 => ("Slow down", "Too many requests. Please wait a minute and try again."),
+        413 => ("Too large", "That secret is larger than this server accepts."),
+        400 => ("Bad request", "The request could not be processed. Try reloading the page."),
+        _ => ("Something went wrong", "An unexpected error occurred."),
+    };
+    ViewData["Title"] = heading;
+}
+<section class="panel center">
+    <h1>@heading</h1>
+    <p class="muted">@text</p>
+    <p><a class="btn" href="/">Back to start</a></p>
+</section>

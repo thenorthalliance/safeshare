@@ -1,0 +1,20 @@
+services:
+  safeshare:
+    build: .
+    image: safeshare:latest
+    container_name: safeshare
+    ports:
+      - "8080:8080"
+    volumes:
+      - safeshare-data:/data
+    environment:
+      SafeShare__SiteName: "SafeShare"
+      SafeShare__MaxSecretSizeKb: "64"
+      # Auto-burn timer: set AllowNoExpiry to "false" to force a timer on every secret and request.
+      SafeShare__AllowNoExpiry: "true"
+      SafeShare__DefaultLifetimeMinutes: "1440"   # 1 day
+      SafeShare__MaxLifetimeMinutes: "43200"      # 30 days
+    restart: unless-stopped
+
+volumes:
+  safeshare-data:

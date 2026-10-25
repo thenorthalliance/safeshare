@@ -1,0 +1,30 @@
+@model TimerFieldModel
+@{
+    // Show the default in the largest unit that represents it exactly.
+    var (amount, unit) = Model.DefaultMinutes % 1440 == 0 ? (Model.DefaultMinutes / 1440, 1440)
+                       : Model.DefaultMinutes % 60 == 0 ? (Model.DefaultMinutes / 60, 60)
+                       : (Model.DefaultMinutes, 1);
+}
+<fieldset class="timer" data-timer data-max-minutes="@Model.MaxMinutes">
+    <legend>@Model.Label</legend>
+    <label class="check">
+        <input type="checkbox" class="timer-enabled" checked disabled="@(!Model.AllowNoExpiry)" />
+        Burn automatically after
+    </label>
+    <span class="timer-inputs">
+        <input type="number" class="input timer-amount" min="1" step="1" value="@amount" aria-label="Timer amount" />
+        <select class="input timer-unit" aria-label="Timer unit">
+            <option value="1" selected="@(unit == 1)">minutes</option>
+            <option value="60" selected="@(unit == 60)">hours</option>
+            <option value="1440" selected="@(unit == 1440)">days</option>
+        </select>
+    </span>
+    <span class="muted small">max @FormatMinutes(Model.MaxMinutes)</span>
+</fieldset>
+
+@functions {
+    private static string FormatMinutes(int minutes) =>
+        minutes % 1440 == 0 ? $"{minutes / 1440} day{(minutes == 1440 ? "" : "s")}"
+        : minutes % 60 == 0 ? $"{minutes / 60} hour{(minutes == 60 ? "" : "s")}"
+        : $"{minutes} minute{(minutes == 1 ? "" : "s")}";
+}

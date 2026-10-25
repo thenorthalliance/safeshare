@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "My requests";
+}
+<section class="panel narrow" id="my-requests">
+    <h1>My requests</h1>
+    <p class="muted" id="requests-empty" hidden>No requests in this browser. <a href="/">Create one</a>.</p>
+    <div class="table-wrap">
+        <table class="table" id="requests-table" hidden>
+            <thead><tr><th>Request</th><th>Created</th><th>Status</th><th></th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</section>
+
+@section Explain {
+    <h2>My requests</h2>
+    <p>Requests are stored <strong>in this browser</strong>, together with their private keys. They don't show up on any other device, and nothing about them is linked to your account.</p>
+    <ul>
+        <li><strong>Waiting:</strong> the sender hasn't sent anything yet.</li>
+        <li><strong>Secret arrived:</strong> open the request to decrypt it. You can do that once.</li>
+        <li><strong>Closed:</strong> the request was used, cancelled or expired. <em>Remove</em> clears it from this list.</li>
+    </ul>
+}
+
+@section Scripts {
+    <script src="~/js/request.js" asp-append-version="true"></script>
+}

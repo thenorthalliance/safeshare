@@ -1,0 +1,79 @@
+@model string
+@{
+    ViewData["Title"] = "My request";
+}
+<section class="panel narrow" id="inbox" data-id="@Model">
+    <div id="inbox-missing" hidden>
+        <h1>Key not found in this browser</h1>
+        <p>Open this page in the browser where you created the request.</p>
+        <a class="btn" href="/">New request</a>
+    </div>
+
+    <div id="inbox-main" hidden>
+        <h1 id="inbox-title">Request</h1>
+        <p class="muted" id="inbox-description"></p>
+
+        <div class="field">
+            Security code
+            <div class="fingerprint" id="inbox-fingerprint"></div>
+        </div>
+
+        <label class="field">
+            Link for the sender
+            <span class="copy-row">
+                <input class="input" id="inbox-request-url" readonly />
+                <button type="button" class="btn" data-copy="#inbox-request-url">Copy</button>
+            </span>
+        </label>
+
+        <div id="state-pending" hidden>
+            <div class="flash">Waiting for the sender… This page checks automatically.</div>
+            <p class="muted small" id="pending-expiry"></p>
+        </div>
+
+        <div id="state-fulfilled" hidden>
+            <div class="flash">A secret has arrived. It can be opened <strong>once</strong>.</div>
+            <p class="muted small" id="fulfilled-expiry"></p>
+            <button type="button" class="btn primary" id="retrieve-btn">Decrypt and show</button>
+        </div>
+
+        <div id="state-gone" hidden>
+            <div class="flash warn" id="gone-text"></div>
+        </div>
+
+        <div id="state-revealed" hidden>
+            <div class="flash warn">Deleted from the server. Copy it now.</div>
+            <textarea id="inbox-secret" class="editor revealed" readonly spellcheck="false" aria-label="Secret"></textarea>
+            <div class="toolbar">
+                <button type="button" class="btn primary" data-copy="#inbox-secret">Copy</button>
+            </div>
+        </div>
+
+        <div class="error" id="inbox-error" hidden></div>
+        <div class="toolbar">
+            <button type="button" class="btn danger" id="cancel-btn" hidden>Cancel request</button>
+            <a class="btn" href="/requests">All my requests</a>
+        </div>
+    </div>
+</section>
+
+@section Explain {
+    <h2>Your request</h2>
+    <ol>
+        <li>Send the <strong>link</strong> to the person who has the secret.</li>
+        <li>Read them the <strong>security code</strong> by phone or video call. They must see the same code before sending.</li>
+        <li>Keep this page open, or come back later. It notices when the secret arrives.</li>
+        <li><strong>Decrypt and show</strong> decrypts it in this browser. The server then deletes the encrypted copy, and this browser deletes the private key.</li>
+    </ol>
+
+    <h3>Good to know</h3>
+    <ul>
+        <li>Only this browser can decrypt the secret, because the private key is stored here. If you see "Key not found", you're in a different browser or its data was cleared. Create a new request.</li>
+        <li><strong>Cancel</strong> deletes the request, along with anything already sent for it.</li>
+        <li>The request burns automatically when its timer runs out.</li>
+    </ul>
+}
+
+@section Scripts {
+    <script src="~/js/request.js" asp-append-version="true"></script>
+}

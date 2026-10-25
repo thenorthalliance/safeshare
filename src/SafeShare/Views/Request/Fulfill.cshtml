@@ -1,0 +1,63 @@
+@model FulfillViewModel
+@{
+    ViewData["Title"] = "Send a requested secret";
+}
+<section class="panel narrow" id="fulfill" data-id="@Model.Id" data-public-key="@Model.PublicKey"
+         data-max-bytes="@(Model.MaxSecretSizeKb * 1024)">
+    <form id="fulfill-form">
+        <h1>Send a requested secret</h1>
+        @if (Model.Description is not null)
+        {
+            <p class="request-description">“@Model.Description”</p>
+        }
+
+        <div class="field">
+            Security code
+            <div class="fingerprint" id="fulfill-fingerprint">…</div>
+            <span class="small">Must match the code the requester reads to you. If it doesn't, <strong>don't send anything</strong>.</span>
+        </div>
+
+        <textarea id="fulfill-text" class="editor" spellcheck="false" autocomplete="off" aria-label="Secret"
+                  placeholder="Paste the secret here" required></textarea>
+        <div class="muted small">Max @Model.MaxSecretSizeKb KB · request auto-burns <partial name="_Expiry" model="Model.ExpiresUtc" /></div>
+
+        <partial name="_TimerField" model="Model.Timer" />
+
+        <label class="check verify">
+            <input type="checkbox" id="fulfill-verified" required />
+            I have confirmed the security code with the requester
+        </label>
+
+        <div class="error" id="fulfill-error" hidden></div>
+        <button type="submit" class="btn primary" id="fulfill-btn">Encrypt and send</button>
+    </form>
+
+    <div id="fulfill-result" hidden>
+        <h1>Sent</h1>
+        <p>Let the requester know it's there.</p>
+        <ul class="facts">
+            <li id="fulfill-expires-row">Auto-burns <span class="countdown">in <time id="fulfill-expires" data-countdown></time></span> if they don't open it.</li>
+            <li id="fulfill-no-timer" hidden>No auto-burn timer.</li>
+        </ul>
+    </div>
+</section>
+
+@section Explain {
+    <h2>Sending a requested secret</h2>
+    <p>Someone asked you for a secret through SafeShare. This page lets you send it so that only they can read it.</p>
+    <ol>
+        <li>Your browser encrypts what you paste with the requester's <strong>public key</strong>. Only their browser holds the matching private key.</li>
+        <li>The server stores only the encrypted version. Neither the server nor anyone who intercepted the link can read it.</li>
+        <li>The requester can open it once. Then it's deleted.</li>
+    </ol>
+
+    <h3>Why the security code matters</h3>
+    <p>The code is a fingerprint of the requester's key. If someone tampered with the link and swapped in their own key, the codes won't match. That's why you confirm them by phone or video call, where you recognise the person.</p>
+
+    <h3>Timer</h3>
+    <p>You can make the secret burn sooner. If the requester set a timer too, the shorter one applies.@if (Model.ExpiresUtc is not null) { <text> Theirs ends <partial name="_Expiry" model="Model.ExpiresUtc" />.</text> }</p>
+}
+
+@section Scripts {
+    <script src="~/js/request.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,45 @@
+# Portainer stack (Git repository deployment): app + Caddy for HTTPS.
+# Use this when you don't have a reverse proxy yet.
+#
+# Portainer: Stacks → Add stack → Repository → Compose path: deploy/stack-caddy.yml
+# Required stack environment variable:
+#   SITE_HOST     hostname users will open, e.g. secrets.company.lan
+# Optional:
+#   CADDY_FLAGS   default "--internal-certs": certificate from Caddy's own CA, for internal names.
+#                 For a public DNS name set it to "--access-log": Caddy then gets a Let's Encrypt
+#                 certificate (ports 80/443 must be reachable from the internet).
+#   SITE_NAME, ALLOW_NO_EXPIRY, DEFAULT_LIFETIME_MINUTES, MAX_LIFETIME_MINUTES
+
+services:
+  safeshare:
+    build:
+      context: ..
+    image: safeshare:latest
+    container_name: safeshare
+    restart: unless-stopped
+    # No published port: only Caddy reaches the app, over the stack's internal network.
+    volumes:
+      - safeshare-data:/data
+    environment:
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      SafeShare__SiteName: "${SITE_NAME:-SafeShare}"
+      SafeShare__AllowNoExpiry: "${ALLOW_NO_EXPIRY:-true}"
+      SafeShare__DefaultLifetimeMinutes: "${DEFAULT_LIFETIME_MINUTES:-1440}"
+      SafeShare__MaxLifetimeMinutes: "${MAX_LIFETIME_MINUTES:-43200}"
+
+  caddy:
+    image: caddy:2.8.4
+    container_name: safeshare-caddy
+    restart: unless-stopped
+    depends_on:
+      - safeshare
+    ports:
+      - "80:80"
+      - "443:443"
+    command: caddy reverse-proxy --from ${SITE_HOST:?Set SITE_HOST in the stack environment variables} --to safeshare:8080 ${CADDY_FLAGS:---internal-certs}
+    volumes:
+      - caddy-data:/data
+
+volumes:
+  safeshare-data:
+  caddy-data:

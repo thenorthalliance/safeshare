@@ -1,0 +1,70 @@
+@model NewRequestViewModel
+@{
+    ViewData["Title"] = "Request a secret";
+}
+<section class="panel narrow" id="new-request">
+    <form id="request-form">
+        <h1>Request a secret</h1>
+
+        <label class="field">
+            What do you need? (optional, not encrypted)
+            <input id="request-description" class="input" maxlength="200" placeholder="e.g. Production DB credentials for project Apollo" />
+        </label>
+
+        <partial name="_TimerField" model="Model.Timer" />
+
+        <p class="note">Open the request later <strong>in this browser, on this device</strong>. A private window won't work.</p>
+
+        <div class="error" id="request-error" hidden></div>
+        <button type="submit" class="btn primary" id="request-btn">Create request</button>
+    </form>
+
+    <div id="request-result" hidden>
+        <h1>Request created</h1>
+
+        <label class="field">
+            1. Send this link to the person who has the secret
+            <span class="copy-row">
+                <input class="input" id="request-url" readonly />
+                <button type="button" class="btn" data-copy="#request-url">Copy</button>
+            </span>
+        </label>
+
+        <div class="field">
+            2. Read this code to them by phone or video call
+            <div class="fingerprint" id="request-fingerprint"></div>
+        </div>
+
+        <p class="field-like">3. When they've sent it, open the request here</p>
+        <a class="btn primary" id="inbox-link" href="#">Open my request</a>
+        <a class="btn" href="/requests">All my requests</a>
+
+        <ul class="facts">
+            <li id="request-expires-row">Auto-burns <span class="countdown">in <time id="request-expires" data-countdown></time></span>.</li>
+            <li id="request-no-timer" hidden>No auto-burn timer.</li>
+        </ul>
+    </div>
+</section>
+
+@section Explain {
+    <h2>Request a secret</h2>
+    <p>Use this when someone outside your organisation, like a client or a vendor, needs to send <em>you</em> a secret and you have no channel you both trust.</p>
+    <ol>
+        <li>Your browser creates a key pair. The <strong>private key never leaves this browser</strong>; the server only gets the public key.</li>
+        <li>You send the request link. It contains nothing secret, so plain e-mail is fine.</li>
+        <li>Both of you see the same <strong>security code</strong>. Read it to each other by phone or video. If it matches, nobody swapped the key along the way.</li>
+        <li>The sender's browser encrypts the secret so that only your browser can decrypt it, once.</li>
+    </ol>
+
+    <h3>Good to know</h3>
+    <ul>
+        <li>The description is shown to the sender and stored unencrypted. Don't put anything sensitive in it.</li>
+        <li>The private key lives in this browser's storage. A private window or clearing site data deletes it, and the secret could then never be decrypted.</li>
+        <li>The sender can set their own timer too. The shorter one applies.</li>
+        <li>All your requests are listed under <a href="/requests">My requests</a>.</li>
+    </ul>
+}
+
+@section Scripts {
+    <script src="~/js/request.js" asp-append-version="true"></script>
+}
