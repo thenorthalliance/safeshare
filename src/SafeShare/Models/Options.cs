@@ -5,7 +5,7 @@ public class SafeShareOptions
     public const string Section = "SafeShare";
 
     /// <summary>Directory holding the SQLite database and data-protection keys.</summary>
-    public string DataDirectory { get; set; } = "data";
+    public string DataDirectory { get; set; } = "App_Data";
 
     /// <summary>Maximum size of the plaintext secret.</summary>
     public int MaxSecretSizeKb { get; set; } = 64;

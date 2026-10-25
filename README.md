@@ -128,7 +128,7 @@ Rate limits per IP: 30 creates/min, 20 reveal attempts/min, 120 status polls/min
 
 ```bash
 cd src/SafeShare
-dotnet run          # http://localhost:5080, data stored in src/SafeShare/data
+dotnet run          # http://localhost:5080, data stored in src/SafeShare/App_Data
 
 # after changing the model:
 dotnet tool install -g dotnet-ef

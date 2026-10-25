@@ -7,7 +7,7 @@
         <h1>Request a secret</h1>
 
         <label class="field">
-            What do you need? (optional, not encrypted)
+            Request label (optional, not encrypted)
             <input id="request-description" class="input" maxlength="200" placeholder="e.g. Production DB credentials for project Apollo" />
         </label>
 
@@ -48,16 +48,17 @@
 
 @section Explain {
     <h2>Request a secret</h2>
-    <p>Use this when someone outside your organisation, like a client or a vendor, needs to send <em>you</em> a secret and you have no channel you both trust.</p>
+    <p>This features allows you to create request for a secret. <em>You</em> are the only person who have key, which makes it extremely secure.</p>
     <ol>
-        <li>Your browser creates a key pair. The <strong>private key never leaves this browser</strong>; the server only gets the public key.</li>
+        <li>Your browser creates a key pair. The <strong>private (decrypting) key never leaves this browser</strong>; the server only gets the public (encryptng) key.</li>
         <li>You send the request link. It contains nothing secret, so plain e-mail is fine.</li>
-        <li>Both of you see the same <strong>security code</strong>. Read it to each other by phone or video. If it matches, nobody swapped the key along the way.</li>
-        <li>The sender's browser encrypts the secret so that only your browser can decrypt it, once.</li>
+        <li>Both of you see the same <strong>security code</strong>. Verify that key matches on both ends. If it matches, nobody swapped the link along the way.</li>
+        <li>The sender's <strong>browser</strong> encrypts the secret so that only your browser can decrypt it, once.</li>
     </ol>
 
     <h3>Good to know</h3>
     <ul>
+        <li>Secret is encrypted in one browser and decrypted on another. Unencrypted secret is never transferred or stored anywhere.</li>
         <li>The description is shown to the sender and stored unencrypted. Don't put anything sensitive in it.</li>
         <li>The private key lives in this browser's storage. A private window or clearing site data deletes it, and the secret could then never be decrypted.</li>
         <li>The sender can set their own timer too. The shorter one applies.</li>

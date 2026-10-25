@@ -1,5 +1,5 @@
 bin/
 obj/
-data/
+App_Data/
 *.user
 .vs/
