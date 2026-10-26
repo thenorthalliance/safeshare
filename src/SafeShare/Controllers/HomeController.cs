@@ -15,12 +15,17 @@ public class HomeController(SecretService secrets, IOptions<SafeShareOptions> op
 
     private readonly SafeShareOptions _options = options.Value;
 
-    [HttpGet("/share")]
+    /// <summary>"Share a secret" is the start page.</summary>
+    [HttpGet("/")]
     public IActionResult Index() => View(new HomeViewModel
     {
         MaxSecretSizeKb = _options.MaxSecretSizeKb,
         Timer = _options.TimerField(),
     });
+
+    // The share form used to live here; keep links that were already shared working.
+    [HttpGet("/share")]
+    public IActionResult OldShareUrl() => RedirectPermanent("/");
 
     /// <summary>Stores an already-encrypted secret. The plaintext and key never reach this endpoint.</summary>
     [HttpPost("/api/secrets")]

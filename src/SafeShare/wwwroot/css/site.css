@@ -127,6 +127,9 @@
 /* ---------- base ---------- */
 
 *, *::before, *::after { box-sizing: border-box; }
+/* The hidden attribute must win over component display rules (e.g. .field { display: flex }),
+   otherwise elements the scripts hide, such as the key field on a link that already has the key, stay visible. */
+[hidden] { display: none !important; }
 
 html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 

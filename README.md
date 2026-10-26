@@ -9,7 +9,7 @@ of the database or backups, nor the server or proxy logs, are enough to read a s
 
 ## Features
 
-### Share a secret (`/share`)
+### Share a secret (`/`, the start page)
 Use this when you have the secret and want to hand it over.
 
 1. The browser generates a random 256-bit key and encrypts with AES-256-GCM. An optional passphrase
@@ -23,7 +23,7 @@ Use this when you have the secret and want to hand it over.
 4. After 5 wrong key or passphrase attempts, the secret is destroyed. The creator gets a private link
    to destroy it early.
 
-### Request a secret (`/`, the start page)
+### Request a secret (`/request`)
 Use this when someone without a trusted channel to you (a client or a vendor) needs to send you a secret.
 
 1. The requester's browser creates an **ECDH P-256 key pair**. The private key is stored

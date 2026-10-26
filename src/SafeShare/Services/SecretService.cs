@@ -69,18 +69,31 @@ public class SecretService(SecretDbContext db, IOptions<SafeShareOptions> option
         if (secret is null)
             return new(RevealStatus.NotFound);
 
+        var max = _options.MaxFailedAttempts;
+
         if (!Ids.HashMatches(authToken, secret.AuthHash))
         {
-            secret.FailedAttempts++;
-            var remaining = _options.MaxFailedAttempts - secret.FailedAttempts;
-            if (remaining <= 0)
-                db.Secrets.Remove(secret);
-            await db.SaveChangesAsync(ct);
-            return new(remaining <= 0 ? RevealStatus.Destroyed : RevealStatus.WrongKey, RemainingAttempts: Math.Max(0, remaining));
+            // Increment in SQL, not in memory: with a read-modify-write, concurrent wrong attempts all read the
+            // same count and together cost only one attempt, which would defeat the limit on passphrase guessing.
+            await db.Secrets.Where(s => s.Id == id)
+                .ExecuteUpdateAsync(s => s.SetProperty(x => x.FailedAttempts, x => x.FailedAttempts + 1), ct);
+            var failed = await db.Secrets.Where(s => s.Id == id)
+                .Select(s => (int?)s.FailedAttempts)
+                .FirstOrDefaultAsync(ct);
+            if (failed is null)
+                return new(RevealStatus.NotFound);   // burned or revealed meanwhile
+
+            var remaining = max - failed.Value;
+            if (remaining > 0)
+                return new(RevealStatus.WrongKey, RemainingAttempts: remaining);
+
+            await db.Secrets.Where(s => s.Id == id).ExecuteDeleteAsync(ct);
+            return new(RevealStatus.Destroyed);
         }
 
         // The conditional delete is what makes it one-time: of two concurrent readers only one removes the row.
-        var deleted = await db.Secrets.Where(s => s.Id == id).ExecuteDeleteAsync(ct);
+        // It also refuses a secret that reached the attempt limit while this request was in flight.
+        var deleted = await db.Secrets.Where(s => s.Id == id && s.FailedAttempts < max).ExecuteDeleteAsync(ct);
         return deleted == 1 ? new(RevealStatus.Ok, secret) : new(RevealStatus.NotFound);
     }
 

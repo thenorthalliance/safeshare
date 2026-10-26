@@ -90,6 +90,10 @@ app.Use(async (ctx, next) =>
     h.XContentTypeOptions = "nosniff";
     h.XFrameOptions = "DENY";
     h["X-Robots-Tag"] = "noindex, nofollow";
+    // Clipboard is left allowed on purpose: the Copy buttons use navigator.clipboard.writeText.
+    h["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), payment=(), usb=()";
+    h["Cross-Origin-Opener-Policy"] = "same-origin";
+    h["Cross-Origin-Resource-Policy"] = "same-origin";
     if (!ctx.Request.Path.StartsWithSegments("/css") && !ctx.Request.Path.StartsWithSegments("/js"))
         h.CacheControl = "no-store";
     await next();

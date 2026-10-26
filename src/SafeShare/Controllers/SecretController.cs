@@ -55,7 +55,7 @@ public class SecretController(SecretService secrets) : Controller
         TempData["flash"] = await secrets.BurnAsync(id, token, ct)
             ? "The secret has been destroyed."
             : "This secret no longer exists.";
-        return Redirect("/share");
+        return Redirect("/");
     }
 
     private ViewResult Gone()

@@ -21,16 +21,11 @@ public class RequestController(RequestService requests, IOptions<SafeShareOption
 
     private readonly SafeShareOptions _options = options.Value;
 
-    /// <summary>"Request a secret" is the start page.</summary>
-    [HttpGet("/")]
+    [HttpGet("/request")]
     public IActionResult New() => View(new NewRequestViewModel
     {
         Timer = _options.TimerField(),
     });
-
-    // The request form used to live here; keep links that were already shared working.
-    [HttpGet("/request")]
-    public IActionResult OldNewRequestUrl() => RedirectPermanent("/");
 
     [HttpGet("/requests")]
     public IActionResult Mine() => View();

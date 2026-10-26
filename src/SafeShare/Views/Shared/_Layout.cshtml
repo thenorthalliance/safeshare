@@ -2,7 +2,8 @@
     var siteName = SiteOptions.Value.SiteName;
     var title = ViewData["Title"] as string;
     var path = Context.Request.Path.Value ?? "/";
-    string Current(string href) => (href == "/" ? path == "/" : path.StartsWith(href)) ? "page" : "false";
+    // Exact match or a sub-path, so "/requests" doesn't also highlight "/request".
+    string Current(string href) => path == href || (href != "/" && path.StartsWith(href + "/")) ? "page" : "false";
 }
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -28,8 +29,8 @@
             </a>
             <div class="header-end">
                 <nav aria-label="Main">
-                    <a href="/" aria-current="@Current("/")">Request a secret</a>
-                    <a href="/share" aria-current="@Current("/share")">Share a secret</a>
+                    <a href="/" aria-current="@Current("/")">Share a secret</a>
+                    <a href="/request" aria-current="@Current("/request")">Request a secret</a>
                     <a href="/requests" aria-current="@Current("/requests")">My requests</a>
                     <a href="/about" aria-current="@Current("/about")">How it works</a>
                 </nav>
