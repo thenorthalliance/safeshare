@@ -130,6 +130,17 @@
         }
     }
 
+    // Show/hide toggles for password fields: <button data-reveal="#input" aria-pressed="false">.
+    document.querySelectorAll("[data-reveal]").forEach(btn => {
+        const target = document.querySelector(btn.dataset.reveal);
+        if (!target) return;
+        btn.addEventListener("click", () => {
+            const show = target.type === "password";
+            target.type = show ? "text" : "password";
+            btn.setAttribute("aria-pressed", String(show));
+        });
+    });
+
     document.querySelectorAll("[data-copy]").forEach(btn => {
         btn.addEventListener("click", async () => {
             const target = document.querySelector(btn.dataset.copy);

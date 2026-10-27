@@ -11,9 +11,15 @@
         <div class="muted small">Max @Model.MaxSecretSizeKb KB · Ctrl+Enter to create</div>
 
         <div class="options">
-            <label>
+            <label class="wide">
                 Passphrase (optional)
-                <input id="secret-passphrase" type="password" class="input" autocomplete="new-password" />
+                <span class="input-row">
+                    <input id="secret-passphrase" type="password" class="input mono" autocomplete="new-password" spellcheck="false" />
+                    <partial name="_RevealToggle" model="@("#secret-passphrase")" />
+                    <button type="button" class="btn icon" id="generate-passphrase" aria-label="Generate new passphrase" title="Generate new passphrase">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"/><path d="M21 3v5h-5"/></svg>
+                    </button>
+                </span>
             </label>
         </div>
 
@@ -57,6 +63,14 @@
             </div>
         </div>
 
+        <label class="field" id="result-passphrase-field" hidden>
+            Passphrase
+            <span class="copy-row">
+                <input class="input" id="share-passphrase" readonly />
+                <button type="button" class="btn" data-copy="#share-passphrase">Copy</button>
+            </span>
+        </label>
+
         <label class="field">
             Private link to destroy the secret early
             <span class="copy-row">
@@ -90,7 +104,7 @@
 
     <h3>Options</h3>
     <ul>
-        <li><strong>Passphrase:</strong> an extra password the recipient must type. Tell them through another channel. After 5 wrong attempts the secret is destroyed.</li>
+        <li><strong>Passphrase:</strong> an extra password the recipient must type. Tell them through another channel. After 5 wrong attempts the secret is destroyed. The arrow button makes a random one that is easy to read out over the phone.</li>
         <li><strong>Auto-burn timer:</strong> the secret is deleted when it runs out, even if nobody opened it. Untick it to keep the secret until it is read.</li>
         <li><strong>Destroy link:</strong> lets you delete the secret before it is read.</li>
     </ul>

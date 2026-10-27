@@ -32,6 +32,14 @@
         return { key, auth };
     }
 
+    // 16 characters of lowercase Crockford base32 (80 bits), grouped by four: "k7mq-x9tr-4hpw-c2nd".
+    // The alphabet has no i, l, o or u, so it can be read out over the phone without mix-ups.
+    function generatePassphrase() {
+        const alphabet = "0123456789abcdefghjkmnpqrstvwxyz";
+        const chars = Array.from(randomBytes(16), b => alphabet[b & 31]).join("");
+        return chars.match(/.{4}/g).join("-");
+    }
+
     // ---- create page ----
 
     const createPanel = document.getElementById("create");
@@ -43,6 +51,15 @@
         const btn = document.getElementById("create-btn");
         const error = document.getElementById("create-error");
         const maxBytes = parseInt(createPanel.dataset.maxBytes, 10);
+
+        // A generated passphrase is shown right away: the creator has to pass it on.
+        const reveal = form.querySelector('[data-reveal="#secret-passphrase"]');
+        document.getElementById("generate-passphrase").addEventListener("click", () => {
+            pass.value = generatePassphrase();
+            if (pass.type === "password") reveal.click();
+            pass.focus();
+            pass.select();
+        });
 
         text.addEventListener("keydown", e => {
             if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
@@ -89,6 +106,8 @@
                 showExpiry(document.getElementById("result-expires"), document.getElementById("result-expires-row"),
                            document.getElementById("result-no-timer"), data.expiresUtc);
                 document.getElementById("result-passphrase").hidden = pass.value.length === 0;
+                document.getElementById("result-passphrase-field").hidden = pass.value.length === 0;
+                document.getElementById("share-passphrase").value = pass.value;
 
                 text.value = "";
                 pass.value = "";

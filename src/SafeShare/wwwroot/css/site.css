@@ -325,6 +325,7 @@ code { font-family: var(--font-mono); font-size: .9em; background: var(--surface
 .field .muted, .field .small { text-transform: none; font-family: var(--font-body); }
 
 .options { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0 1rem; margin-top: 1.25rem; }
+.options .wide { grid-column: 1 / -1; max-width: 26rem; }
 
 .check { display: inline-flex; align-items: center; gap: .6rem; cursor: pointer; }
 .check.verify { display: flex; margin: 1.25rem 0; font-weight: 500; }
@@ -332,6 +333,15 @@ code { font-family: var(--font-mono); font-size: .9em; background: var(--surface
 input[type="checkbox"] { width: 1.15rem; height: 1.15rem; accent-color: var(--check-accent); margin: 0; flex-shrink: 0; }
 
 .copy-row { display: flex; gap: .5rem; }
+
+/* An input with square icon buttons beside it (show/hide, generate). Unlike .copy-row it never stacks. */
+.input-row { display: flex; gap: .5rem; }
+.btn.icon { padding: 0; width: 2.9rem; flex-shrink: 0; }
+.btn.icon svg { width: 1.1rem; height: 1.1rem; }
+.btn.icon[aria-pressed="true"] { background: var(--btn-bg); border-color: var(--btn-bg); color: var(--btn-text); }
+[data-reveal] .icon-hide,
+[data-reveal][aria-pressed="true"] .icon-show { display: none; }
+[data-reveal][aria-pressed="true"] .icon-hide { display: block; }
 
 .error { color: var(--error-text); font-size: .9rem; display: block; margin: .5rem 0; }
 
