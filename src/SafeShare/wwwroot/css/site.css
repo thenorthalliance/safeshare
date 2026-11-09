@@ -482,6 +482,15 @@ body.artifact-mode { overflow: hidden; }
 .artifact-bar-end { display: flex; align-items: center; gap: 1rem; }
 .artifact-viewer iframe { flex: 1; width: 100%; border: 0; background: #fff; }
 
+/* Pages for recipients (body.guest): one small centred card, nothing else to click. */
+body.guest .main { display: flex; flex-direction: column; justify-content: center; }
+body.guest .footer-inner { padding-block: 1.25rem; }
+.panel.guest-card { width: 100%; max-width: 30rem; margin: 0 auto; }
+.panel.guest-card h1 { font-size: clamp(1.75rem, 4vw, 2.25rem); }
+.panel.guest-card form { margin-top: 1.5rem; }
+.panel.guest-card form + p { margin-top: 1.5rem; }
+.panel.guest-card .btn.primary { width: 100%; }
+
 /* ---------- small screens ---------- */
 
 @media (max-width: 640px) {
