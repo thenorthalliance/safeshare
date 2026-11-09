@@ -1,0 +1,48 @@
+@model ManageArtifactViewModel
+@{
+    ViewData["Title"] = "Manage shared artifact";
+}
+<section class="panel narrow">
+    @if (Model.Artifact is not { } artifact)
+    {
+        <h1>Artifact is gone</h1>
+        <p class="muted">It has expired or was already deleted.</p>
+        <a class="btn" href="/artifact">Share an artifact</a>
+    }
+    else
+    {
+        <h1>Shared artifact</h1>
+        <ul class="facts">
+            <li>Created <time datetime="@artifact.CreatedUtc.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")" data-relative>@artifact.CreatedUtc.ToString("yyyy-MM-dd HH:mm") UTC</time>.</li>
+            <li>Deleted automatically <partial name="_Expiry" model="(DateTime?)artifact.ExpiresUtc" />.</li>
+            <li>
+                @if (artifact.ViewCount == 0)
+                {
+                    <text>Not opened yet.</text>
+                }
+                else
+                {
+                    <text>Opened @artifact.ViewCount time@(artifact.ViewCount == 1 ? "" : "s"), last
+                        <time datetime="@artifact.LastViewedUtc!.Value.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")" data-relative>@artifact.LastViewedUtc.Value.ToString("yyyy-MM-dd HH:mm") UTC</time>.</text>
+                }
+            </li>
+            @if (artifact.FailedAttempts > 0)
+            {
+                <li><strong>@artifact.FailedAttempts wrong password attempt(s) since it was last opened.</strong></li>
+            }
+        </ul>
+        <form method="post" asp-antiforgery="true" action="/a/@Model.Id/manage/@Model.Token">
+            <button type="submit" class="btn danger">Delete now</button>
+        </form>
+    }
+</section>
+
+@section Explain {
+    <h2>Managing your artifact</h2>
+    <p>This private page is for the person who shared the artifact.</p>
+    <ul>
+        <li><strong>Opened</strong> counts how often someone unlocked it with the right password.</li>
+        <li><strong>Wrong attempts</strong> mean someone typed a wrong password. After @SiteOptions.Value.MaxFailedAttempts in a row, the artifact is deleted automatically.</li>
+        <li><strong>Delete now</strong> removes it immediately. The link stops working for everyone.</li>
+    </ul>
+}

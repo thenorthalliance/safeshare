@@ -7,10 +7,12 @@ public class SecretDbContext(DbContextOptions<SecretDbContext> options) : DbCont
 {
     public DbSet<Secret> Secrets => Set<Secret>();
     public DbSet<SecretRequest> Requests => Set<SecretRequest>();
+    public DbSet<Artifact> Artifacts => Set<Artifact>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Secret>().HasIndex(s => s.ExpiresUtc);
+        modelBuilder.Entity<Artifact>().HasIndex(a => a.ExpiresUtc);
 
         var request = modelBuilder.Entity<SecretRequest>();
         request.HasIndex(r => r.ExpiresUtc);

@@ -5,7 +5,7 @@ using SafeShare.Models;
 
 namespace SafeShare.Services;
 
-/// <summary>Burns secrets and requests whose auto-burn timer has fired.</summary>
+/// <summary>Burns secrets, requests and artifacts whose auto-burn timer has fired.</summary>
 public class ExpiredSecretCleanup(
     IServiceScopeFactory scopeFactory,
     IOptions<SafeShareOptions> options,
@@ -27,8 +27,10 @@ public class ExpiredSecretCleanup(
 
                 var secrets = await db.Secrets.Where(s => s.ExpiresUtc <= now).ExecuteDeleteAsync(stoppingToken);
                 var requests = await db.Requests.Where(r => r.ExpiresUtc <= now).ExecuteDeleteAsync(stoppingToken);
-                if (secrets + requests > 0)
-                    logger.LogInformation("Burned {Secrets} expired secret(s) and {Requests} expired request(s)", secrets, requests);
+                var artifacts = await db.Artifacts.Where(a => a.ExpiresUtc <= now).ExecuteDeleteAsync(stoppingToken);
+                if (secrets + requests + artifacts > 0)
+                    logger.LogInformation("Burned {Secrets} expired secret(s), {Requests} expired request(s) and {Artifacts} expired artifact(s)",
+                        secrets, requests, artifacts);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {

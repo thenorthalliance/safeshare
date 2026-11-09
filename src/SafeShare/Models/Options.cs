@@ -13,6 +13,9 @@ public class SafeShareOptions
     /// <summary>Wrong key/passphrase attempts allowed before a shared secret is destroyed.</summary>
     public int MaxFailedAttempts { get; set; } = 5;
 
+    /// <summary>Maximum size of an encrypted artifact (the HTML is gzipped before encryption).</summary>
+    public int MaxArtifactSizeKb { get; set; } = 20 * 1024;
+
     public int CleanupIntervalMinutes { get; set; } = 1;
 
     public string SiteName { get; set; } = "SafeShare";

@@ -1,0 +1,111 @@
+@model NewArtifactViewModel
+@{
+    ViewData["Title"] = "Share an artifact";
+}
+<section class="panel narrow" id="artifact-create" data-max-bytes="@(Model.MaxArtifactSizeKb * 1024)">
+    <form id="artifact-form">
+        <h1>Share an artifact</h1>
+
+        <label class="field">
+            Title (optional)
+            <input id="artifact-title" class="input" maxlength="200" autocomplete="off"
+                   placeholder="e.g. Checkout redesign – prototype v2" />
+        </label>
+
+        <div class="field">
+            HTML
+            <span class="file-row">
+                <label class="btn" for="artifact-file">Choose HTML file</label>
+                <input id="artifact-file" type="file" accept=".html,.htm,text/html" class="visually-hidden" />
+                <span class="muted small" id="artifact-file-name">or paste the code below, or drop a file on it</span>
+            </span>
+        </div>
+        <textarea id="artifact-html" class="editor" spellcheck="false" autocomplete="off" aria-label="HTML code"
+                  placeholder="<!DOCTYPE html>&#10;<html>…</html>" required></textarea>
+        <div class="muted small">Max @((Model.MaxArtifactSizeKb / 1024.0).ToString("0.#")) MB after compression</div>
+
+        <div class="options">
+            <label class="wide">
+                Password
+                <span class="input-row">
+                    <input id="artifact-password" type="password" class="input mono" autocomplete="new-password" spellcheck="false" required minlength="12" />
+                    <partial name="_RevealToggle" model="@("#artifact-password")" />
+                    <button type="button" class="btn icon" id="artifact-generate" aria-label="Generate new password" title="Generate new password">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"/><path d="M21 3v5h-5"/></svg>
+                    </button>
+                </span>
+                <span class="muted small">At least 12 characters. The page is encrypted with this password.</span>
+            </label>
+        </div>
+
+        <partial name="_TimerField" model="Model.Timer" />
+
+        <div class="error" id="artifact-error" hidden></div>
+        <button type="submit" class="btn primary" id="artifact-btn">Create shared link</button>
+    </form>
+
+    <div id="artifact-result" hidden>
+        <h1>Shared link created</h1>
+
+        <label class="field">
+            Link
+            <span class="copy-row">
+                <input class="input" id="artifact-url" readonly />
+                <button type="button" class="btn" data-copy="#artifact-url">Copy</button>
+            </span>
+        </label>
+        <label class="field">
+            Password
+            <span class="copy-row">
+                <input class="input" id="artifact-result-password" readonly />
+                <button type="button" class="btn" data-copy="#artifact-result-password">Copy</button>
+            </span>
+        </label>
+        <label class="field">
+            Private link to delete it early
+            <span class="copy-row">
+                <input class="input" id="artifact-manage-url" readonly />
+                <button type="button" class="btn" data-copy="#artifact-manage-url">Copy</button>
+            </span>
+        </label>
+
+        <ul class="facts">
+            <li>Send the password through a different channel than the link (e.g. link by e-mail, password by phone or chat).</li>
+            <li>The link can be opened any number of times until it expires <span class="countdown">in <time id="artifact-expires" data-countdown></time></span>, or until you delete it.</li>
+            <li>The password isn't stored anywhere. Save it now if you'll need it again.</li>
+        </ul>
+
+        <a class="btn" href="/artifact">Share another</a>
+    </div>
+
+    <div id="artifact-list" hidden>
+        <h2>Shared from this browser</h2>
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>Artifact</th><th>Expires</th><th></th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+@section Explain {
+    <h2>Share an artifact</h2>
+    <p>Share an HTML page, such as a prototype or a design mock-up, with a customer. Only people who have both the link and the password can open it.</p>
+    <ol>
+        <li>Your browser compresses the HTML and encrypts it with a key derived from the password (PBKDF2 + AES-256-GCM). Only the encrypted version is uploaded.</li>
+        <li>Send the link and the password through <strong>two different channels</strong>. The link alone reveals nothing.</li>
+        <li>The customer can open the link <strong>as often as they like</strong>, until the time you set runs out or you delete it.</li>
+    </ol>
+
+    <h3>Good to know</h3>
+    <ul>
+        <li><strong>Password:</strong> a strong one is generated for you. If you type your own, make it long. After @SiteOptions.Value.MaxFailedAttempts wrong passwords in a row, the artifact is deleted.</li>
+        <li><strong>Delete link:</strong> removes the artifact right away. This browser also keeps a list below, with the link and the delete page, but not the password.</li>
+        <li><strong>Scripts:</strong> the page runs in an isolated sandbox. Its scripts work, and it can load fonts and libraries from CDNs, but it can't touch @SiteOptions.Value.SiteName itself.</li>
+    </ul>
+}
+
+@section Scripts {
+    <script src="~/js/artifact.js" asp-append-version="true"></script>
+}

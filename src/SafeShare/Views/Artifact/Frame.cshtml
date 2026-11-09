@@ -1,0 +1,24 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /><meta name="robots" content="noindex, nofollow" /></head>
+<body>
+@* Served with a CSP sandbox (opaque origin) by Program.cs. The viewer page posts the decrypted HTML here once,
+   and this shell replaces itself with it. Inline on purpose: the sandboxed origin can't load this app's scripts. *@
+<script>
+(function () {
+    "use strict";
+    if (window.parent === window) return;
+    window.addEventListener("message", function (e) {
+        if (e.source !== window.parent || !e.data || e.data.type !== "safeshare-artifact" || typeof e.data.html !== "string") return;
+        document.open();
+        document.write(e.data.html);
+        document.close();
+    });
+    window.parent.postMessage({ type: "safeshare-artifact-ready" }, "*");
+})();
+</script>
+</body>
+</html>

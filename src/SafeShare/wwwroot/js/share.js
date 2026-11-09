@@ -3,7 +3,7 @@
     "use strict";
 
     const { te, td, toBase64, fromBase64, toBase64Url, fromBase64Url, concat, randomBytes, sha256,
-            postJson, errorMessage, showError, requireSecureContext, readTimer, showExpiry } = window.MP;
+            postJson, errorMessage, showError, requireSecureContext, readTimer, showExpiry, generatePassphrase } = window.MP;
 
     // urlKey (32 random bytes, only ever in the URL fragment) [+ PBKDF2(passphrase)] → HKDF →
     //   "encrypt" label: AES-256-GCM key   (never leaves the browser)
@@ -30,14 +30,6 @@
         const auth = new Uint8Array(await crypto.subtle.deriveBits(
             { name: "HKDF", hash: "SHA-256", salt, info: INFO_AUTH }, base, 256));
         return { key, auth };
-    }
-
-    // 16 characters of lowercase Crockford base32 (80 bits), grouped by four: "k7mq-x9tr-4hpw-c2nd".
-    // The alphabet has no i, l, o or u, so it can be read out over the phone without mix-ups.
-    function generatePassphrase() {
-        const alphabet = "0123456789abcdefghjkmnpqrstvwxyz";
-        const chars = Array.from(randomBytes(16), b => alphabet[b & 31]).join("");
-        return chars.match(/.{4}/g).join("-");
     }
 
     // ---- create page ----

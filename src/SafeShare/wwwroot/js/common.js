@@ -38,6 +38,14 @@
     const randomBytes = n => crypto.getRandomValues(new Uint8Array(n));
     const sha256 = async bytes => new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
 
+    // 16 characters of lowercase Crockford base32 (80 bits), grouped by four: "k7mq-x9tr-4hpw-c2nd".
+    // The alphabet has no i, l, o or u, so it can be read out over the phone without mix-ups.
+    function generatePassphrase() {
+        const alphabet = "0123456789abcdefghjkmnpqrstvwxyz";
+        const chars = Array.from(randomBytes(16), b => alphabet[b & 31]).join("");
+        return chars.match(/.{4}/g).join("-");
+    }
+
     // Human-comparable code for a public key: first 80 bits of SHA-256 in Crockford base32, e.g. "7KQ2-M9XD-4TRA-0GHF".
     async function fingerprint(publicKeyRaw) {
         const alphabet = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
@@ -230,7 +238,7 @@
     };
 
     window.MP = {
-        te, td, toBase64, fromBase64, toBase64Url, fromBase64Url, concat, randomBytes, sha256, fingerprint,
+        te, td, toBase64, fromBase64, toBase64Url, fromBase64Url, concat, randomBytes, sha256, fingerprint, generatePassphrase,
         postJson, errorMessage, showError, requireSecureContext, readTimer, showExpiry, tickCountdown, store,
     };
 })();

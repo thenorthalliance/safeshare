@@ -54,6 +54,37 @@ public record RequestStatusResponse(string Status, DateTime? ExpiresUtc, DateTim
 
 public record RetrieveResponse(byte[] EphemeralPublicKey, byte[] Salt, byte[] Iv, byte[] Ciphertext);
 
+public class CreateArtifactBody
+{
+    public byte[]? Ciphertext { get; set; }
+    public byte[]? Iv { get; set; }
+    public byte[]? Salt { get; set; }
+    public byte[]? AuthHash { get; set; }
+    public int? LifetimeMinutes { get; set; }
+}
+
+public record CreateArtifactResponse(string Id, string ManageToken, DateTime ExpiresUtc);
+
+public class NewArtifactViewModel
+{
+    public int MaxArtifactSizeKb { get; set; }
+    public TimerFieldModel Timer { get; set; } = new();
+}
+
+public class OpenArtifactViewModel
+{
+    public string Id { get; set; } = default!;
+    public string Salt { get; set; } = default!;
+    public DateTime ExpiresUtc { get; set; }
+}
+
+public class ManageArtifactViewModel
+{
+    public string Id { get; set; } = default!;
+    public string Token { get; set; } = default!;
+    public Artifact? Artifact { get; set; }
+}
+
 public class TimerFieldModel
 {
     public bool AllowNoExpiry { get; set; }

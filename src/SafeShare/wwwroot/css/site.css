@@ -200,6 +200,8 @@ code { font-family: var(--font-mono); font-size: .9em; background: var(--surface
 }
 .topbar nav a:hover { border-bottom-color: var(--noa-pink); color: var(--text); }
 .topbar nav a[aria-current="page"] { border-bottom-color: var(--strong-border); }
+.topbar nav .nav-icon { display: inline-flex; align-items: center; }
+.topbar nav .nav-icon svg { width: 1.2rem; height: 1.2rem; }
 
 .header-end { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 2rem; }
 
@@ -225,6 +227,14 @@ code { font-family: var(--font-mono); font-size: .9em; background: var(--surface
 .footer { background: var(--footer-bg); color: var(--noa-white); margin-top: auto; }
 .footer-inner { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; padding-block: 2rem; font: 400 .875rem/1.3 var(--font-sans); text-transform: uppercase; }
 .footer .logo { height: 1.4rem; }
+
+/* The footer is dark in every theme, so the theme switch there is drawn light-on-dark. */
+.footer .theme-switch { margin-left: auto; border-color: var(--noa-white); }
+.footer .theme-switch button { color: var(--noa-white); }
+.footer .theme-switch button + button { border-left-color: var(--noa-white); }
+.footer .theme-switch button:hover { background: var(--noa-dark-mid); }
+.footer .theme-switch button[aria-pressed="true"] { background: var(--noa-white); color: var(--noa-dark); }
+.footer .theme-switch button:focus-visible { outline-color: var(--noa-white); }
 
 /* ---------- panels ---------- */
 
@@ -446,6 +456,31 @@ form > .btn.primary, #create-result > .btn, #request-result > .btn { margin-top:
 .table th, .table td { text-align: left; padding: .8rem .75rem; border-bottom: 1px solid var(--divider); vertical-align: middle; }
 .table th { font: 400 .875rem/1.3 var(--font-sans); text-transform: uppercase; color: var(--text-muted); border-bottom-color: var(--strong-border); }
 .table .btn { padding: .3rem .75rem; font-size: .875rem; }
+
+.table-actions { white-space: nowrap; text-align: right !important; }
+.table-actions .btn + .btn { margin-left: .35rem; }
+
+/* ---------- shared artifacts ---------- */
+
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.file-row { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem 1rem; text-transform: none; }
+.file-row .btn { cursor: pointer; }
+.file-row:has(input:focus-visible) .btn { outline: 2px solid var(--strong-border); outline-offset: 2px; }
+#artifact-html { min-height: 14rem; }
+.options .small { text-transform: none; font-family: var(--font-body); }
+#artifact-list { margin-top: 3rem; }
+
+/* After unlocking, the decrypted page takes over the whole window, under a slim bar. */
+body.artifact-mode { overflow: hidden; }
+.artifact-viewer { position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; background: var(--bg); }
+.artifact-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: .5rem 1.5rem; flex-wrap: wrap;
+    padding: .5rem 1rem; border-bottom: 1px solid var(--divider);
+}
+.artifact-bar .btn { padding: .3rem .75rem; font-size: .875rem; }
+.artifact-title { font: 400 1.25rem/1.3 var(--font-serif); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.artifact-bar-end { display: flex; align-items: center; gap: 1rem; }
+.artifact-viewer iframe { flex: 1; width: 100%; border: 0; background: #fff; }
 
 /* ---------- small screens ---------- */
 

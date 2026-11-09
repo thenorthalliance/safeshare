@@ -1,0 +1,47 @@
+@model OpenArtifactViewModel
+@{
+    ViewData["Title"] = "Shared page";
+}
+<section class="panel narrow" id="artifact-open" data-id="@Model.Id" data-salt="@Model.Salt">
+    <h1>You received a shared page</h1>
+    <p>It is protected with a password. Available until <partial name="_Expiry" model="(DateTime?)Model.ExpiresUtc" />.</p>
+
+    <form id="artifact-unlock">
+        <label class="field">
+            Password
+            <span class="input-row">
+                <input id="artifact-open-password" type="password" class="input mono" autocomplete="off" spellcheck="false" required autofocus />
+                <partial name="_RevealToggle" model="@("#artifact-open-password")" />
+            </span>
+        </label>
+        <div class="error" id="artifact-open-error" hidden></div>
+        <button type="submit" class="btn primary" id="artifact-open-btn">Open</button>
+    </form>
+</section>
+
+<div class="artifact-viewer" id="artifact-viewer" hidden>
+    <div class="artifact-bar">
+        <span class="artifact-title" id="artifact-viewer-title"></span>
+        <span class="artifact-bar-end">
+            <span class="muted small">Available <partial name="_Expiry" model="(DateTime?)Model.ExpiresUtc" /></span>
+            <button type="button" class="btn" id="artifact-fullscreen">Full screen</button>
+        </span>
+    </div>
+    @* Sandboxed without allow-same-origin: the artifact runs on an opaque origin, isolated from this app. *@
+    <iframe id="artifact-frame" title="Shared page" referrerpolicy="no-referrer" allow="fullscreen"
+            sandbox="allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
+</div>
+
+@section Explain {
+    <h2>Opening a shared page</h2>
+    <ol>
+        <li>Type the password you received separately from the link.</li>
+        <li>Your browser downloads the encrypted page and decrypts it locally. The server never sees the content or the password.</li>
+        <li>You can come back to this link as often as you like until it expires.</li>
+    </ol>
+    <p>After @SiteOptions.Value.MaxFailedAttempts wrong passwords in a row, the page is deleted. If that happens, ask the sender to share it again.</p>
+}
+
+@section Scripts {
+    <script src="~/js/artifact.js" asp-append-version="true"></script>
+}
