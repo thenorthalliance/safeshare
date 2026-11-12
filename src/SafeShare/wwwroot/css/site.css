@@ -34,7 +34,6 @@
     --noa-light: #e0f5f6;         /* --color-light */
     --noa-white: #ffffff;
     --noa-white-off: #ebeaea;     /* --color-white-off / background-secondary */
-    --noa-sand: #e7ded1;          /* --color-background-tertiary */
     --noa-grey: #d8d5d5;          /* --color-grey-light */
     --noa-pink: #ff46cd;          /* --color-pink (brand spot, logo square, hover) */
     --noa-yellow: #e4fb00;        /* --color-yellow / brand3 (highlight) */
@@ -55,7 +54,7 @@
     /* semantic (light theme) */
     --bg: var(--noa-white);
     --surface: var(--noa-white-off);
-    --surface-alt: var(--noa-sand);
+    --surface-alt: var(--noa-grey);
     --field: var(--noa-white);
     --text: var(--noa-dark);
     --text-muted: #4f4f4f;        /* --color-text-secondary */
@@ -83,10 +82,10 @@
     :root:not([data-theme="light"]) {
         --bg: var(--noa-dark);
         --surface: var(--noa-dark-mid);
-        --surface-alt: #263030;
+        --surface-alt: var(--noa-dark-mid);
         --field: var(--noa-dark);
         --text: var(--noa-white);
-        --text-muted: #afadac;    /* --color-brand2-quaternary */
+        --text-muted: var(--noa-grey);
         --divider: var(--noa-mid);
         --strong-border: var(--noa-white);
         --btn-bg: var(--noa-white);
@@ -105,10 +104,10 @@
 :root[data-theme="dark"] {
     --bg: var(--noa-dark);
     --surface: var(--noa-dark-mid);
-    --surface-alt: #263030;
+    --surface-alt: var(--noa-dark-mid);
     --field: var(--noa-dark);
     --text: var(--noa-white);
-    --text-muted: #afadac;    /* --color-brand2-quaternary */
+    --text-muted: var(--noa-grey);
     --divider: var(--noa-mid);
     --strong-border: var(--noa-white);
     --btn-bg: var(--noa-white);
