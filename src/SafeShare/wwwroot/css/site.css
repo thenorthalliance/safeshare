@@ -414,6 +414,9 @@ form > .btn.primary, #create-result > .btn, #request-result > .btn { margin-top:
 /* ---------- messages ---------- */
 
 .flash {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
     background: var(--surface-alt);
     color: var(--text);
     border-left: 4px solid var(--strong-border);
@@ -421,6 +424,7 @@ form > .btn.primary, #create-result > .btn, #request-result > .btn { margin-top:
     padding: .9rem 1.1rem;
     margin-bottom: 1.25rem;
 }
+.flash svg { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
 /* Warnings use the brand highlight yellow (noaignite.com uses it for <mark> and blockquote accents). */
 .flash.warn { background: var(--highlight); color: var(--highlight-text); border-left-color: var(--noa-black); }
 .flash.warn a { color: var(--highlight-text); }

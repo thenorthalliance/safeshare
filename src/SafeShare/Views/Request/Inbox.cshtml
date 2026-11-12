@@ -42,7 +42,10 @@
         </div>
 
         <div id="state-revealed" hidden>
-            <div class="flash warn">Deleted from the server. Copy it now.</div>
+            <div class="flash warn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg>
+                Deleted from the server. Copy it now.
+            </div>
             <textarea id="inbox-secret" class="editor revealed" readonly spellcheck="false" aria-label="Secret"></textarea>
             <div class="toolbar">
                 <button type="button" class="btn primary" data-copy="#inbox-secret">Copy</button>
