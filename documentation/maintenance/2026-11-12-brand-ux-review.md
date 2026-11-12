@@ -16,10 +16,10 @@ Checked against NoA Ignite's own identity, SafeShare's color palette, typography
 
 ## What needs attention (ranked)
 
-| # | Area | Finding | Location |
-|---|---|---|---|
-| 1 | Copy | Broken grammar in user-facing explainer text | `Views/Request/New.cshtml:51` |
-| 2 | Color (minor, optional) | `--noa-purple` is defined but unused — harmless, since purple isn't part of NoA Ignite's palette at all; nothing to swap it *to*, just dead code if kept | `wwwroot/css/site.css:41` |
+| # | Area | Finding | Location | Status |
+|---|---|---|---|---|
+| 1 | Copy | Broken grammar in user-facing explainer text | `Views/Request/New.cshtml:51` | **Done** |
+| 2 | Color (minor, optional) | `--noa-purple` is defined but unused — harmless, since purple isn't part of NoA Ignite's palette at all; nothing to swap it *to*, just dead code if kept | `wwwroot/css/site.css:41` | Open (optional cleanup) |
 
 ## Corrected findings (supersedes the original 8)
 
@@ -37,9 +37,9 @@ Every one of these hex values is an **exact match** to the corresponding `--noa-
 - **Original #7 (wrong logo asset) — invalidated, confirmed by direct visual comparison.** Extracted the inline SVG from `Views/Shared/_Logo.cshtml`, rendered it, and compared it side-by-side with the official `NoA Ignite Primary Lockup Pos RGB.svg`/`.png` from the brand's own logo package. Both show the same design: the "N°A" grotesk mark paired with "Ignite" set in the serif — exactly matching the Logotype page's own description, *"consists of the NoA family name paired with a wordmark in our primary brand typeface."* The codebase's logo is correct; the earlier concern was comparing it against the parent brand's unrelated compact "N°A"-only mark.
 - **Original #8 (grammar bug in `Request/New.cshtml:51`) — stands, unaffected by the reference-document mix-up.** Still: *"This features allows you to create request for a secret. You are the only person who have key..."* — still broken English, independent of any brand-guideline question.
 
-## New opportunity (not a fix, an upgrade)
+## New opportunity (not a fix, an upgrade) — Done
 
-`brand-resources/Final NoaType/` now contains the actual **licensed** NoA Serif 2.0 and NoA Grotesk 2.0 webfont files (`.woff`/`.woff2`), which `site.css`'s own comment says were missing ("NOT included in this repository... until then, the metric-matched Arial fallbacks... keep the layout identical"). Copying `NoaSerif2.0/web/*.woff2` and `NoaGrotesk2.0/web/*.woff2` into `src/SafeShare/wwwroot/fonts/` (matching the filenames `@font-face` already expects) would drop the Georgia/Arial fallback and render in the real brand typefaces — purely additive, no CSS changes needed. Not filed as a ranked finding since it's an enhancement, not a drift from guidelines, but worth doing given the assets are now on hand.
+`brand-resources/Final NoaType/` contained the actual **licensed** NoA Serif 2.0 and NoA Grotesk 2.0 webfont files, which `site.css`'s comment said were missing. Copied `NoaGrotesk2.0/web/{Regular,Medium,Bold}.woff2` and `NoaSerif2.0/web/{Regular,Bold}.woff2` into `src/SafeShare/wwwroot/fonts/` under the filenames `@font-face` already expected — purely additive, no CSS rule changes. Verified live: all five files now serve `200` from the rebuilt container, matching the source byte sizes. README and the `site.css` header comment were updated to stop saying these fonts are missing/licensed-elsewhere, and to note they're proprietary (not OFL, unlike Inter) — don't reuse outside NoA Ignite projects.
 
 ## What's aligned well
 
