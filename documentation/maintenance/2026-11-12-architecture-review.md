@@ -48,6 +48,20 @@ There's no `app.UseHttpsRedirection()` or `app.UseHsts()` in `Program.cs`, and n
 
 `IsPublicKey` and the ciphertext/hash-length checks appear near-identically in both `HomeController.cs:35-42` and `RequestController.cs:37-43,74-81`. Controllers manually null- and length-check every field rather than using `[Required]`/data-annotation validation or a shared validator. This is consistent and not wrong — just mild duplication across two files.
 
+## Action items
+
+Concrete, independent fixes, roughly ordered by impact. File:line references below are current as of `origin/master` (they've shifted since the `13b8679` snapshot this review was written against — see the scope note at the end of this document).
+
+| # | Action | Fix | File(s) | Effort | Status |
+|---|---|---|---|---|---|
+| 1 | Add `ForwardedHeaders` middleware | `app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor \| ForwardedHeaders.XForwardedProto })` right after `var app = builder.Build();`, before `UseRateLimiter()`. Needs a `KnownProxies`/`KnownNetworks` decision scoped to the real reverse-proxy network — cross-reference the security audit's port-3452/NPM finding, since both concern the same trust boundary | `Program.cs:72` (insert point), `:57-70` (the rate limiter reading `RemoteIpAddress`), `:127` (`UseRateLimiter()`) | 30 min (includes a deploy-config check) | Open |
+| 2 | Add HTTPS redirection / HSTS / cookie policy | `app.UseHsts()` guarded by `!app.Environment.IsDevelopment()`; set `AntiforgeryOptions.Cookie.SecurePolicy` and `CookieTempDataProviderOptions.Cookie.SecurePolicy` to `CookieSecurePolicy.Always` (same snippet already drafted in `2026-10-26-security-audit.md` finding #6). Only meaningful once #1 lands, so `Request.IsHttps` reflects `X-Forwarded-Proto` | `Program.cs` | 20 min, depends on #1 | Open |
+| 3 | Options POCO mixing concerns | No fix needed now — the finding itself says "harmless at current size." Revisit (extract a `LifetimePolicy` helper or validation extension method) only if `SafeShareOptions` grows more validation/view-model methods | `Models/Options.cs:32-37,42-61` | — | Open / low priority, no action needed yet |
+| 4 | Dedicated view model for `/about` | Add `AboutViewModel { SiteName, MaxFailedAttempts, MaxLifetimeMinutes, AllowNoExpiry }` to `Models/ViewModels.cs` (matches the existing `*ViewModel` classes there); update `About.cshtml`'s `@model` and its 4 property references; change `View(_options)` to `View(new AboutViewModel { ... })` | `HomeController.cs:48-49`, `Models/ViewModels.cs`, `Views/Home/About.cshtml` | 15 min | Open |
+| 5 | Extract shared boundary validation | Pull the repeated `Iv`/`Salt`/`AuthHash`/`Ciphertext`/public-key length checks into static helpers (e.g. a `BodyValidation` class with `ValidateCiphertext(byte[]? ciphertext, int maxKb)`, `ValidatePublicKey(byte[]? key)`), reused across all three controllers. Plain static class, no DI — matches the codebase's existing minimal-abstraction style | `HomeController.cs:35-42`, `RequestController.cs:37-43,74-81`, `ArtifactController.cs:39-49,75-76` | 45 min across 3 files | Open |
+
+#1 and #2 are related (do #1 first). #3 isn't really an action item — it's a "watch it" note. Everything else is independent and can land in any order.
+
 ## What was checked and found sound
 
 - **One-time-reveal semantics**: conditional `ExecuteUpdateAsync`/`ExecuteDeleteAsync` make reveal and retrieve race-free under concurrency.
@@ -63,3 +77,4 @@ There's no `app.UseHttpsRedirection()` or `app.UseHsts()` in `Program.cs`, and n
 - Read-only review of the tracked source under `src/SafeShare` (controllers, services, models, `Program.cs`, EF Core context and migrations), performed by a subagent with file-search access.
 - No live site or runtime behavior was tested as part of this review — see the separate `2026-10-26-security-audit.md` for a prior header/live-endpoint pass.
 - Not a security review in its own right; overlaps with but does not replace the dedicated security audit.
+- **Scope note (added when breaking this review into action items):** this review was written against commit `13b8679`. `origin/master` has since gained an entire Artifacts feature (`ArtifactController`, `ArtifactService`, `Views/Artifact/*`) that predates none of this review's 5 findings — it was never read. In particular, finding #5's duplicated validation block is now *triplicated* (the Artifacts endpoint repeats the same `Iv`/`Salt`/`AuthHash`/`Ciphertext` checks). The Artifacts feature itself has not been reviewed and may have its own findings; that's a separate task.
