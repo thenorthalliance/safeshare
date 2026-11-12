@@ -36,9 +36,8 @@
     --noa-white-off: #ebeaea;     /* --color-white-off / background-secondary */
     --noa-sand: #e7ded1;          /* --color-background-tertiary */
     --noa-grey: #d8d5d5;          /* --color-grey-light */
-    --noa-pink: #ff46cd;          /* --color-pink (brand spot, logo square, hover) */
     --noa-yellow: #e4fb00;        /* --color-yellow / brand3 (highlight) */
-    --noa-purple: #a681f7;        /* brand4 */
+    --noa-purple: #a681f7;        /* brand4 (secondary accent, hover) */
     --noa-error: #e30002;
     --noa-success: #4caf50;
     --noa-disabled: #828282;
@@ -64,7 +63,7 @@
     --strong-border: var(--noa-dark);
     --btn-bg: var(--noa-dark);
     --btn-text: var(--noa-white);
-    --btn-hover-bg: var(--noa-pink);
+    --btn-hover-bg: var(--noa-purple);
     --btn-hover-text: var(--noa-dark);
     --outline-hover-bg: var(--noa-dark-mid);
     --outline-hover-text: var(--noa-light);
@@ -198,7 +197,7 @@ code { font-family: var(--font-mono); font-size: .9em; background: var(--surface
     padding-block: .35rem;
     border-bottom: 2px solid transparent;
 }
-.topbar nav a:hover { border-bottom-color: var(--noa-pink); color: var(--text); }
+.topbar nav a:hover { border-bottom-color: var(--noa-purple); color: var(--text); }
 .topbar nav a[aria-current="page"] { border-bottom-color: var(--strong-border); }
 .topbar nav .nav-icon { display: inline-flex; align-items: center; }
 .topbar nav .nav-icon svg { width: 1.2rem; height: 1.2rem; }
@@ -444,7 +443,7 @@ form > .btn.primary, #create-result > .btn, #request-result > .btn { margin-top:
     background: var(--highlight);
     color: var(--highlight-text);
     border-radius: var(--radius-card);
-    box-shadow: .4rem .5rem 0 var(--noa-pink);
+    box-shadow: .4rem .5rem 0 var(--noa-purple);
 }
 
 .request-description { font: 400 1.5rem/1.3 var(--font-serif); border-left: 4px solid var(--highlight); padding-left: 1rem; }
