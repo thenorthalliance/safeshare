@@ -79,18 +79,18 @@ Grammatically broken; should read something close to "This feature lets you requ
 
 Concrete, independent fixes, roughly ordered by impact. Each is scoped to land as its own small change.
 
-| # | Action | Fix | File(s) | Effort | Status |
-|---|---|---|---|---|---|
-| 1 | Drop the unapproved pink hover accent | Replace `--noa-pink` as the hover color for `--btn-hover-bg`, the nav-link hover underline, and the `.fingerprint` shadow with an approved token — purple (`--noa-purple`) if an accent color is wanted, or a neutral (Dark Grey 2 / Mid Grey) if not | `wwwroot/css/site.css:39,67,201,427` | 15 min | **Done** — replaced with `--noa-purple` in all three spots; `--noa-pink` removed entirely |
-| 2 | Put purple to use, or remove it | If purple becomes the new hover/accent color from #1, this resolves itself. Otherwise delete the unused `--noa-purple` token rather than leave documented-but-dead code | `wwwroot/css/site.css:41` | 5 min | **Done** — resolved as a side effect of #1; purple is now the hover/accent color |
-| 3 | Replace the teal/mint neutral family | Swap `--noa-mid`, `--noa-mid-light`, `--noa-light` (dividers, dark-theme hover states) for guideline greys: Dark Grey 2 `#545050`, Mid Grey `#AFADAC`, Light Grey `#D8D5D5` as appropriate per light/dark theme | `wwwroot/css/site.css:32-34,70,74,91,95,98,113,117,120` | 30 min (touches both theme blocks; re-check contrast) | Open |
-| 4 | Switch body copy to NoA Serif | Point `--font-body` (or the `body` rule directly) at `var(--font-serif)` instead of `"Inter"`; keep Inter loaded only as the serif's eventual fallback chain if desired | `wwwroot/css/site.css:49,136` | 30 min (single variable swap, but reflows every page — visual QA pass needed) | Open |
-| 5 | Stop `<strong>` from rendering bold | Add `strong, b { font-weight: inherit; }` (or similar reset) and, if emphasis still needs to read visually, use color/underline instead of weight | `wwwroot/css/site.css` (new rule near the `a`/`code` base rules) | 10 min | Open |
-| 6 | Drop medium weight from `.fingerprint` / `.check.verify` | Change `font-weight: 500` to `400` (or remove the explicit weight so it inherits Regular) | `wwwroot/css/site.css:330,418` | 5 min | Open |
-| 7 | Replace the logo asset | Swap `_Logo.cshtml`'s SVG for the guideline's compact "N°A" logotype. **Blocked on receiving the approved SVG/asset from the brand team** — this can't be redrawn from the PDF alone with confidence | `Views/Shared/_Logo.cshtml` | Blocked (design asset needed); wiring it in once received is ~10 min | Blocked |
-| 8 | Fix the grammar bug | Reword "This features allows you to create request for a secret. *You* are the only person who have key..." to something like "This feature lets you request a secret. You're the only one who has the key..." | `Views/Request/New.cshtml:51` | 2 min | Open |
+| # | Action | Fix | File(s) | Effort |
+|---|---|---|---|---|
+| 1 | Drop the unapproved pink hover accent | Replace `--noa-pink` as the hover color for `--btn-hover-bg`, the nav-link hover underline, and the `.fingerprint` shadow with an approved token — purple (`--noa-purple`) if an accent color is wanted, or a neutral (Dark Grey 2 / Mid Grey) if not | `wwwroot/css/site.css:39,67,201,427` | 15 min |
+| 2 | Put purple to use, or remove it | If purple becomes the new hover/accent color from #1, this resolves itself. Otherwise delete the unused `--noa-purple` token rather than leave documented-but-dead code | `wwwroot/css/site.css:41` | 5 min |
+| 3 | Replace the teal/mint neutral family | Swap `--noa-mid`, `--noa-mid-light`, `--noa-light` (dividers, dark-theme hover states) for guideline greys: Dark Grey 2 `#545050`, Mid Grey `#AFADAC`, Light Grey `#D8D5D5` as appropriate per light/dark theme | `wwwroot/css/site.css:32-34,70,74,91,95,98,113,117,120` | 30 min (touches both theme blocks; re-check contrast) |
+| 4 | Switch body copy to NoA Serif | Point `--font-body` (or the `body` rule directly) at `var(--font-serif)` instead of `"Inter"`; keep Inter loaded only as the serif's eventual fallback chain if desired | `wwwroot/css/site.css:49,136` | 30 min (single variable swap, but reflows every page — visual QA pass needed) |
+| 5 | Stop `<strong>` from rendering bold | Add `strong, b { font-weight: inherit; }` (or similar reset) and, if emphasis still needs to read visually, use color/underline instead of weight | `wwwroot/css/site.css` (new rule near the `a`/`code` base rules) | 10 min |
+| 6 | Drop medium weight from `.fingerprint` / `.check.verify` | Change `font-weight: 500` to `400` (or remove the explicit weight so it inherits Regular) | `wwwroot/css/site.css:330,418` | 5 min |
+| 7 | Replace the logo asset | Swap `_Logo.cshtml`'s SVG for the guideline's compact "N°A" logotype. **Blocked on receiving the approved SVG/asset from the brand team** — this can't be redrawn from the PDF alone with confidence | `Views/Shared/_Logo.cshtml` | Blocked (design asset needed); wiring it in once received is ~10 min |
+| 8 | Fix the grammar bug | Reword "This features allows you to create request for a secret. *You* are the only person who have key..." to something like "This feature lets you request a secret. You're the only one who has the key..." | `Views/Request/New.cshtml:51` | 2 min |
 
-#1 and #2 are done (verified by rebuilding and checking the served CSS). Everything except #7 can be done without external input; #7 needs the brand team's actual logo file before it can be wired in.
+Everything except #7 can be done without external input. #7 needs the brand team's actual logo file before it can be wired in.
 
 ## Method and limitations
 
