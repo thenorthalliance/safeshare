@@ -20,6 +20,8 @@ Checked against NoA Ignite's own identity, SafeShare's color palette, typography
 |---|---|---|---|---|
 | 1 | Copy | Broken grammar in user-facing explainer text | `Views/Request/New.cshtml:51` | **Done** |
 | 2 | Color (minor, optional) | `--noa-purple` is defined but unused — harmless, since purple isn't part of NoA Ignite's palette at all; nothing to swap it *to*, just dead code if kept | `wwwroot/css/site.css:41` | Open (optional cleanup) |
+| 3 | Color | `--surface-alt` used an undocumented hex in both themes: `--noa-sand` (`#e7ded1`, light) matched no NoA Ignite neutral — it's a near-identical twin of the unrelated parent-brand PDF's Beige 2 — and `#263030` (dark) was a one-off custom shade with no named counterpart at all | `wwwroot/css/site.css:58,86,108` (pre-fix line numbers) | **Done** |
+| 4 | Color | Dark-theme `--text-muted: #afadac` was labeled `--color-brand2-quaternary` in a comment, implying an extended/unverified palette not shown on the Colors page available to this review | `wwwroot/css/site.css:89` (pre-fix line number) | **Done** |
 
 ## Corrected findings (supersedes the original 8)
 
@@ -36,6 +38,15 @@ Every one of these hex values is an **exact match** to the corresponding `--noa-
 - **Original #5 and #6 (weight mixing: `<strong>` bold, `.fingerprint`/`.check.verify` medium) — weakened to non-issues.** The parent-brand PDF's "always Regular, never mix weights" rule doesn't apply here. NoA Ignite's own guideline explicitly pairs multiple weights for digital content: *"we pair all three typefaces. We primary use NoA Serif Regular, NoA Grotesk Regular and Inter Regular and Medium"* (and even more weights for reports). The available font files confirm this — NoA Grotesk ships Light/Regular/Medium/Bold, Inter ships Light through Bold plus italics. Bold `<strong>` emphasis and Inter Medium accents are normal within this system, not a violation. (If anything, `<strong>` defaulting to the browser's Bold rather than the documented "Medium" pairing is a very minor nitpick, not worth a dedicated action item.)
 - **Original #7 (wrong logo asset) — invalidated, confirmed by direct visual comparison.** Extracted the inline SVG from `Views/Shared/_Logo.cshtml`, rendered it, and compared it side-by-side with the official `NoA Ignite Primary Lockup Pos RGB.svg`/`.png` from the brand's own logo package. Both show the same design: the "N°A" grotesk mark paired with "Ignite" set in the serif — exactly matching the Logotype page's own description, *"consists of the NoA family name paired with a wordmark in our primary brand typeface."* The codebase's logo is correct; the earlier concern was comparing it against the parent brand's unrelated compact "N°A"-only mark.
 - **Original #8 (grammar bug in `Request/New.cshtml:51`) — stands, unaffected by the reference-document mix-up.** Still: *"This features allows you to create request for a secret. You are the only person who have key..."* — still broken English, independent of any brand-guideline question.
+
+### 3–4. Dark-theme follow-up: two gaps found while checking dark-mode compliance — Done
+
+A later, more targeted check of just the dark-theme tokens (prompted by "is dark theme compliant with NoA colors?") turned up two values that matched *none* of NoA Ignite's ten documented neutrals (Black, Off black, Light Gray, Dark, Mid-dark, Off white, Mid, Mid-light, Light, White), in a doc that had otherwise checked out token-for-token:
+
+- `--surface-alt` used `var(--noa-sand)` (`#e7ded1`) in light theme and a hardcoded `#263030` in dark theme. Neither is one of the ten documented neutrals. `#e7ded1` is suspiciously close to the unrelated parent-brand PDF's Beige 2 (`#E7DED0`) — almost certainly another leftover from the original wrong-reference pass, confirmed absent from NoA Ignite's own Colors page (grepped the saved export directly; "sand" only appears as a CSS class-name substring, `block-dosanddonts-images`, not an actual color).
+- Dark-theme `--text-muted: #afadac` carried a comment, `--color-brand2-quaternary`, implying it came from an extended/secondary palette this review never had access to.
+
+**Fix applied:** `--surface-alt` now reuses `--noa-grey` (Light Gray `#d8d5d5`) in light theme, and `--noa-dark-mid` (Mid-dark `#313b3b`, same as `--surface`) in dark theme — accepting that NoA Ignite's own neutral steps don't offer a finer gradient between Dark and Mid-dark, rather than inventing one. `--text-muted` in dark theme now reuses `--noa-grey` as well. The now-unused `--noa-sand` token was removed. Verified live: the served CSS reflects all four changes, and both dark-theme blocks (`@media (prefers-color-scheme: dark)` and `:root[data-theme="dark"]`) stay identical, per the file's own "keep the two token blocks identical" comment.
 
 ## New opportunity (not a fix, an upgrade) — Done
 
