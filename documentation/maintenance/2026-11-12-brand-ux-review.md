@@ -19,7 +19,7 @@ Checked against NoA Ignite's own identity, SafeShare's color palette, typography
 | # | Area | Finding | Location | Status |
 |---|---|---|---|---|
 | 1 | Copy | Broken grammar in user-facing explainer text | `Views/Request/New.cshtml:51` | **Done** |
-| 2 | Color (minor, optional) | `--noa-purple` is defined but unused — harmless, since purple isn't part of NoA Ignite's palette at all; nothing to swap it *to*, just dead code if kept | `wwwroot/css/site.css:41` | Open (optional cleanup) |
+| 2 | Color (minor, optional) | `--noa-purple` is defined but unused — harmless, since purple isn't part of NoA Ignite's palette at all; nothing to swap it *to*, just dead code if kept | `wwwroot/css/site.css:41` (pre-fix line number) | **Done** |
 | 3 | Color | `--surface-alt` used an undocumented hex in both themes: `--noa-sand` (`#e7ded1`, light) matched no NoA Ignite neutral — it's a near-identical twin of the unrelated parent-brand PDF's Beige 2 — and `#263030` (dark) was a one-off custom shade with no named counterpart at all | `wwwroot/css/site.css:58,86,108` (pre-fix line numbers) | **Done** |
 | 4 | Color | Dark-theme `--text-muted: #afadac` was labeled `--color-brand2-quaternary` in a comment, implying an extended/unverified palette not shown on the Colors page available to this review | `wwwroot/css/site.css:89` (pre-fix line number) | **Done** |
 
