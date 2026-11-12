@@ -1,99 +1,59 @@
 # SafeShare UX & brand alignment review, 2026-11-12
 
 Code: `src/SafeShare` (ASP.NET Core 10 MVC), at commit `13b8679`
-Reference: `NoA Visual Identity Guidelines` v1.0 (2024-11-12), `NoA-Visual-Identity-Brand-Guidelines-241112.pdf`
+Reference (corrected, see below): NoA Ignite brand identity, exported from Frontify to `../brand-resources/` — `Colors - Identity - NoA Ignite.html`, `Typography - Identity - NoA Ignite.html`, `Logotype - Identity - NoA Ignite.html`, plus the licensed font files (`Final NoaType/`) and logo package (`NoA Ignite Logo Package.zip`)
 Auditor: Claude (Cowork), at the request of Dawid Sokół
+
+## Correction notice
+
+The original version of this review (same day, earlier) compared SafeShare against `NoA-Visual-Identity-Brand-Guidelines-241112.pdf` — the **parent "NoA" network's** master visual identity guidelines, which cover the whole alliance (NoA Ignite, NoA Consulting, NoA Health, etc.) as one umbrella brand. SafeShare is explicitly a **NoA Ignite** project (its own README says so), and NoA Ignite has its own Frontify-hosted brand identity that overrides parts of the master brand — notably, it makes **pink the primary vibrant color**, with yellow demoted to secondary ("inherited from the master brand").
+
+Once the correct reference (`brand-resources/`) was available, almost all of the original findings turned out to be false positives caused by checking against the wrong document. This revision replaces those findings. A code fix made under the wrong assumption (swapping the pink accent for purple, commit `9308c78`) was reverted (commit `49598ca`) once the mistake was found.
 
 ## Summary
 
-SafeShare's UI follows the right *shape* of the NoA brand system (two-typeface model, uppercase functional labels, light/dark theme, small corner radii, yellow as the lone highlight accent) but has drifted from this specific guideline document on color and typography specifics, and likely ships the wrong logo asset. One confirmed copy/grammar bug was also found.
-
-**Three findings worth prioritizing:**
-
-1. An unapproved pink (`#ff46cd`) — not present anywhere in the guideline's palette — drives every interactive accent (button hover, nav underline, security-code shadow), while the guideline's actual secondary color (purple, `#A681F7`) is defined in code but never used.
-2. Body copy renders in Inter, not NoA Serif; the guideline requires NoA Serif for all three text roles (headlines, secondary headlines, body copy).
-3. `_Logo.cshtml` is commented as sourced "from noaignite.com" and renders a wide wordmark (~3.8:1 aspect ratio) rather than this guideline's compact "N°A" logotype (~2:1, degree mark over the O) — worth confirming with the brand team whether the older lockup is still sanctioned.
+Checked against NoA Ignite's own identity, SafeShare's color palette, typography, and logo are **correct almost across the board** — the codebase's `site.css` comments ("tokens taken from noaignite.com") were right all along. Only one finding survives from the original review, and it's independent of brand guidelines entirely: a grammar bug in user-facing copy.
 
 ## What needs attention (ranked)
 
 | # | Area | Finding | Location |
 |---|---|---|---|
-| 1 | Color | Unapproved pink (`#ff46cd`) drives all interactive accents; not in this guideline's palette | `wwwroot/css/site.css:39,67,201,427` |
-| 2 | Color | Purple (`#A681F7`, the guideline's documented secondary vibrant color) is defined but never used anywhere | `wwwroot/css/site.css:41` |
-| 3 | Color | Teal/mint family (`--noa-mid`, `--noa-mid-light`, `--noa-light`) drives dividers and dark-theme hovers; absent from this guideline's palette | `wwwroot/css/site.css:32-34,70,74,91,95,98,113,117,120` |
-| 4 | Typography | Body copy uses Inter, not NoA Serif (guideline requires NoA Serif for headlines, secondary headlines, *and* body copy) | `wwwroot/css/site.css:49,136` |
-| 5 | Typography | `<strong>` used extensively in body copy with no weight reset — renders default bold, mixing weights in primary-brand context | Most views, e.g. `Views/Home/Index.cshtml:84,88-95` |
-| 6 | Typography | `.fingerprint` / `.check.verify` use medium (500) weight in a user-facing (not strictly "functional/report") context | `wwwroot/css/site.css:330,418` |
-| 7 | Logo | `_Logo.cshtml` renders the older noaignite.com wordmark, not this guideline's compact "N°A" logotype | `Views/Shared/_Logo.cshtml:1-2` |
-| 8 | Copy | Broken grammar in user-facing explainer text | `Views/Request/New.cshtml:51` |
+| 1 | Copy | Broken grammar in user-facing explainer text | `Views/Request/New.cshtml:51` |
+| 2 | Color (minor, optional) | `--noa-purple` is defined but unused — harmless, since purple isn't part of NoA Ignite's palette at all; nothing to swap it *to*, just dead code if kept | `wwwroot/css/site.css:41` |
 
-## Details
+## Corrected findings (supersedes the original 8)
 
-### 1–3. Color palette drift
+NoA Ignite's actual palette (Colors page, `brand-resources/Colors - Identity - NoA Ignite.html`):
 
-The guideline's complete palette (Color → Complete Palette, p.19) is: Yellow `#E4FB00`, Purple `#A681F7` (the vibrant pair, yellow primary per p.17/22), Beige 1 `#CEBEA1`, Beige 2 `#E7DED0`, Black `#000000`, Off-Black `#1A1A1A`, Dark Grey 1 `#292929`, Dark Grey 2 `#545050`, Mid Grey `#AFADAC`, Light Grey `#D8D5D5`, Off-White `#EBEAEA`, White `#FFFFFF`.
+- **Vibrant**: Pink `#FF46CD` (RGBA 255,70,205,1) — *"our main vibrant color and should take priority over the yellow color which is inherited from the master brand"* — and Yellow `#E4FB00`, secondary.
+- **Neutrals** (quoted: *"has a touch of blue"*): Black `#000000`, Off black `#1A1A1A`, Light Gray `#D8D5D5`, Dark `#151D1F`, Mid-dark `#313B3B`, Off white `#EBEAEA`, Mid `#547178`, Mid-light `#C2E0E7`, Light `#E0F5F6`, White `#FFFFFF`.
 
-`site.css` matches yellow and purple exactly as CSS custom properties, but:
+Every one of these hex values is an **exact match** to the corresponding `--noa-*` token already in `site.css:29-41` (`--noa-dark: #151d1f`, `--noa-dark-mid: #313b3b`, `--noa-mid: #547178`, `--noa-mid-light: #c2e0e7`, `--noa-light: #e0f5f6`, `--noa-white-off: #ebeaea`, `--noa-grey: #d8d5d5`, `--noa-pink: #ff46cd`, `--noa-yellow: #e4fb00`). There is no purple anywhere in NoA Ignite's own system — it only exists in the unrelated parent-brand PDF, which is why `--noa-purple` sits unused in the codebase.
 
-- **Purple is defined and never referenced again** (`--noa-purple: #a681f7;` at `site.css:41` is the only occurrence in the file). The guideline's documented secondary brand color is entirely absent from the live UI.
-- **An unapproved pink (`#ff46cd`) drives every interactive accent**: primary-button hover (`--btn-hover-bg`, used at `site.css:67,379`), nav-link hover underline (`site.css:201`), and the security-code "fingerprint" box-shadow (`site.css:427`). Pink does not appear anywhere in this guideline's palette. The guideline's Color → Don'ts page explicitly calls out non-approved color combinations and (for the logotype) custom colors as things to avoid.
-- **A teal/mint family** (`--noa-mid: #547178`, `--noa-mid-light: #c2e0e7`, `--noa-light: #e0f5f6`) drives dividers and dark-theme hover states (`site.css:70,74,91,95,98,113,117,120`) — also not part of this palette. The CSS's own comments attribute these tokens to noaignite.com's general site rather than this specific guideline document.
-- Yellow is otherwise used correctly as the sole "highlight" accent (warnings, security-code background), consistent with the guideline's "yellow should be primary" / "pair one vibrant with 1–2 neutrals" guidance (Color → Color Usage, p.22).
+- **Original #1 and #2 (pink unapproved / purple unused) — invalidated.** Pink is NoA Ignite's own primary vibrant color, used correctly for the hover/accent role. Purple isn't part of this brand at all; its presence in the code is a leftover from an irrelevant reference, not a missing-color gap.
+- **Original #3 (teal/mint "not in the palette") — invalidated.** `--noa-mid`/`--noa-mid-light`/`--noa-light` are exactly NoA Ignite's documented "Mid"/"Mid-light"/"Light" neutrals (the palette's own "touch of blue").
+- **Original #4 (body copy should be NoA Serif) — invalidated.** Typography page: *"NoA Serif and NoA Grotesk is our primary typefaces... Inter is our secondary typeface. It's primary use for small body copy"* and *"We use Inter for extensive body text in small sizes, where accessibility and legibility are key."* Inter-for-body is exactly what the brand identity asks for, not a deviation.
+- **Original #5 and #6 (weight mixing: `<strong>` bold, `.fingerprint`/`.check.verify` medium) — weakened to non-issues.** The parent-brand PDF's "always Regular, never mix weights" rule doesn't apply here. NoA Ignite's own guideline explicitly pairs multiple weights for digital content: *"we pair all three typefaces. We primary use NoA Serif Regular, NoA Grotesk Regular and Inter Regular and Medium"* (and even more weights for reports). The available font files confirm this — NoA Grotesk ships Light/Regular/Medium/Bold, Inter ships Light through Bold plus italics. Bold `<strong>` emphasis and Inter Medium accents are normal within this system, not a violation. (If anything, `<strong>` defaulting to the browser's Bold rather than the documented "Medium" pairing is a very minor nitpick, not worth a dedicated action item.)
+- **Original #7 (wrong logo asset) — invalidated, confirmed by direct visual comparison.** Extracted the inline SVG from `Views/Shared/_Logo.cshtml`, rendered it, and compared it side-by-side with the official `NoA Ignite Primary Lockup Pos RGB.svg`/`.png` from the brand's own logo package. Both show the same design: the "N°A" grotesk mark paired with "Ignite" set in the serif — exactly matching the Logotype page's own description, *"consists of the NoA family name paired with a wordmark in our primary brand typeface."* The codebase's logo is correct; the earlier concern was comparing it against the parent brand's unrelated compact "N°A"-only mark.
+- **Original #8 (grammar bug in `Request/New.cshtml:51`) — stands, unaffected by the reference-document mix-up.** Still: *"This features allows you to create request for a secret. You are the only person who have key..."* — still broken English, independent of any brand-guideline question.
 
-### 4–6. Typography drift
+## New opportunity (not a fix, an upgrade)
 
-The guideline (Typography → Hierarchy/Weight Usage, p.27-31) specifies two brand typefaces — NoA Serif and NoA Grotesk — and is explicit that:
-
-- Primary headlines, secondary headlines, **and body copy** all use **NoA Serif Regular**.
-- NoA Grotesk is reserved for "Functional" usage: buttons, labels, numbers.
-- "We always use the regular version of both... in all our primary touch points" and "Do not mix different weights in primary brand usage" are both stated directly (p.30/32).
-
-In the codebase:
-
-- `--font-body: "Inter", ...` (`site.css:49`) is applied to `body` (`site.css:136`), so all paragraph/body text renders in Inter — a third, non-brand typeface — rather than NoA Serif. This is a bigger deviation than the guideline's explicit "don't use NoA Grotesk as body copy" don't anticipates, since it isn't using either brand typeface for body text at all. (The README does disclose this as a deliberate choice pending licensed font files, but it still diverges from this specific guideline.)
-- `<strong>` tags appear in body copy across nearly every view (`Home/Index.cshtml`, `Home/About.cshtml`, `Request/New.cshtml`, `Request/Inbox.cshtml`, `Request/Mine.cshtml`, `Request/Fulfill.cshtml`, `Secret/Manage.cshtml`, `Secret/Open.cshtml`) with no CSS rule resetting their weight, so they render at the browser's default bold. This directly runs into the guideline's "do not mix different weights in primary brand usage" don't, and happens dozens of times across the app.
-- `.fingerprint` (the security-code display) and `.check.verify` use `font-weight: 500` (medium) at `site.css:330,418`. The guideline only sanctions medium/bold weights for "Functional" usage in rare report-like contexts (p.31) — a public-facing security code that every user reads is closer to primary brand communication than that narrow carve-out.
-- What *is* aligned: headings (`h1`–`h3`) correctly use weight 400/Regular only (`site.css:146`), and uppercase nav/button/field labels correctly use the grotesk-equivalent sans in a genuinely "Functional" context (buttons, nav, field labels, table headers) — consistent with the guideline.
-
-### 7. Logo asset
-
-`Views/Shared/_Logo.cshtml:1` is commented *"NoA Ignite logo (from noaignite.com)"* and renders an SVG with `viewBox="0 0 121 32"` — a wide wordmark, roughly 3.8:1 width:height. The guideline's approved logotype (Logotype → Primary Placement/Minimum Size, p.9-11) is the compact "N°A" mark (degree symbol over the O), shown throughout the guideline at roughly a 2:1 aspect ratio. These appear to be different assets. The theme-aware `fill="currentColor"` approach (switching only between white-on-dark and black-on-light) is itself consistent with the guideline's approved monochrome logo usage — the concern is specifically whether this is the right logo file at all, not how it's recolored. Worth confirming with the brand team whether the wider noaignite.com lockup is still sanctioned, since this guideline document would supersede it if not.
-
-### 8. Copy bug
-
-`Views/Request/New.cshtml:51`:
-
-> "This features allows you to create request for a secret. *You* are the only person who have key, which makes it extremely secure."
-
-Grammatically broken; should read something close to "This feature lets you request a secret. You're the only one who has the key, which makes it extremely secure."
+`brand-resources/Final NoaType/` now contains the actual **licensed** NoA Serif 2.0 and NoA Grotesk 2.0 webfont files (`.woff`/`.woff2`), which `site.css`'s own comment says were missing ("NOT included in this repository... until then, the metric-matched Arial fallbacks... keep the layout identical"). Copying `NoaSerif2.0/web/*.woff2` and `NoaGrotesk2.0/web/*.woff2` into `src/SafeShare/wwwroot/fonts/` (matching the filenames `@font-face` already expects) would drop the Georgia/Arial fallback and render in the real brand typefaces — purely additive, no CSS changes needed. Not filed as a ranked finding since it's an enhancement, not a drift from guidelines, but worth doing given the assets are now on hand.
 
 ## What's aligned well
 
-- Yellow used correctly and exclusively as the "highlight" accent (warnings, security-code background), matching the guideline's "yellow is primary, used sparingly as an accent" direction.
-- Light/dark theme toggle only swaps between approved monochrome (white/black) logo renditions — no arbitrary logo recoloring.
-- Uppercase, tight-tracking functional labels (nav, buttons, field labels, table headers) correctly use the grotesk-style sans, matching the guideline's "Functional" typeface usage.
-- Small, consistent corner radii (`--radius`, `--radius-input`, `--radius-card`) match the brand's documented flat, low-radius style.
-- Headings consistently use Regular weight only, with no bold headline variants in primary brand usage.
-
-## Action items
-
-Concrete, independent fixes, roughly ordered by impact. Each is scoped to land as its own small change.
-
-| # | Action | Fix | File(s) | Effort |
-|---|---|---|---|---|
-| 1 | Drop the unapproved pink hover accent | Replace `--noa-pink` as the hover color for `--btn-hover-bg`, the nav-link hover underline, and the `.fingerprint` shadow with an approved token — purple (`--noa-purple`) if an accent color is wanted, or a neutral (Dark Grey 2 / Mid Grey) if not | `wwwroot/css/site.css:39,67,201,427` | 15 min |
-| 2 | Put purple to use, or remove it | If purple becomes the new hover/accent color from #1, this resolves itself. Otherwise delete the unused `--noa-purple` token rather than leave documented-but-dead code | `wwwroot/css/site.css:41` | 5 min |
-| 3 | Replace the teal/mint neutral family | Swap `--noa-mid`, `--noa-mid-light`, `--noa-light` (dividers, dark-theme hover states) for guideline greys: Dark Grey 2 `#545050`, Mid Grey `#AFADAC`, Light Grey `#D8D5D5` as appropriate per light/dark theme | `wwwroot/css/site.css:32-34,70,74,91,95,98,113,117,120` | 30 min (touches both theme blocks; re-check contrast) |
-| 4 | Switch body copy to NoA Serif | Point `--font-body` (or the `body` rule directly) at `var(--font-serif)` instead of `"Inter"`; keep Inter loaded only as the serif's eventual fallback chain if desired | `wwwroot/css/site.css:49,136` | 30 min (single variable swap, but reflows every page — visual QA pass needed) |
-| 5 | Stop `<strong>` from rendering bold | Add `strong, b { font-weight: inherit; }` (or similar reset) and, if emphasis still needs to read visually, use color/underline instead of weight | `wwwroot/css/site.css` (new rule near the `a`/`code` base rules) | 10 min |
-| 6 | Drop medium weight from `.fingerprint` / `.check.verify` | Change `font-weight: 500` to `400` (or remove the explicit weight so it inherits Regular) | `wwwroot/css/site.css:330,418` | 5 min |
-| 7 | Replace the logo asset | Swap `_Logo.cshtml`'s SVG for the guideline's compact "N°A" logotype. **Blocked on receiving the approved SVG/asset from the brand team** — this can't be redrawn from the PDF alone with confidence | `Views/Shared/_Logo.cshtml` | Blocked (design asset needed); wiring it in once received is ~10 min |
-| 8 | Fix the grammar bug | Reword "This features allows you to create request for a secret. *You* are the only person who have key..." to something like "This feature lets you request a secret. You're the only one who has the key..." | `Views/Request/New.cshtml:51` | 2 min |
-
-Everything except #7 can be done without external input. #7 needs the brand team's actual logo file before it can be wired in.
+- Pink as the primary interactive accent (button hover, nav underline, security-code shadow) — correct per NoA Ignite's own color hierarchy.
+- Yellow used as the secondary vibrant/highlight accent — correct.
+- The full neutral family (dark/mid/light/off-white/off-black/etc.) — exact hex matches.
+- Inter for body copy — explicitly the documented secondary typeface for this exact purpose.
+- The `_Logo.cshtml` primary lockup SVG — confirmed, via direct visual comparison, to be the correct NoA Ignite asset.
+- Theme-aware `fill="currentColor"` logo recoloring (white-on-dark, black-on-light only) — matches the Logotype page's "the logo should only appear in black and white" don't.
+- Uppercase, all-caps NoA Grotesk for nav/buttons/labels — matches *"To maintain consistency, Noa Grotesk should always be set in all caps."*
 
 ## Method and limitations
 
-- Guideline pages reviewed: 1-35 (Foundation, Logotype, Color, Typography, Gradient intro) of a 52-page PDF; Layout System and Gradient detail sections (p.36+) were not reviewed in depth.
-- Compared against `wwwroot/css/site.css` (full file) and the Razor views under `Views/` (full file list; `_Layout.cshtml`, `_Logo.cshtml`, `Home/Index.cshtml`, `Secret/Open.cshtml`, `Request/New.cshtml` read in full; other views spot-checked via grep for weight/emphasis usage).
-- No live site or rendered-screenshot comparison was performed — this is a static code-vs-document comparison, not a visual regression check.
+- `brand-resources/` pages read: Colors, Typography, Logotype (full text extracted from the saved Frontify HTML exports; image-only sections — e.g. the itemized Color/Logotype "Do/Don'ts" examples — were not individually inspected, since the surrounding prose already settled every claim in the original review).
+- Logo comparison was empirical: the inline SVG was extracted from `_Logo.cshtml`, rendered to PNG via `qlmanage`, and visually compared against `NY logo/Primary Lockup/Digital/{SVG,PNG}/NoA Ignite Primary Lockup Pos RGB.*` from the official logo package — not just a textual aspect-ratio guess (which is what led the original review astray).
+- Font weights were cross-checked against the actual files shipped in `Final NoaType/{NoaSerif2.0,NoaGrotesk2.0,NoaInter4.1}/web/`, not just guideline prose.
+- Graphic System and Icons pages in `brand-resources/` were not reviewed — out of scope for this correction, since the original review made no claims there.
