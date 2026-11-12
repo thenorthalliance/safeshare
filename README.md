@@ -78,19 +78,10 @@ The UI follows the NoA Ignite brand from noaignite.com: its colour tokens (dark 
 Inter for body text, and the NoA logo (inline SVG, adapts to dark mode). It's all defined as CSS variables
 at the top of `wwwroot/css/site.css`.
 
-**Brand fonts:** noaGrotesk and noaSerif are licensed and not included in the repo. Get the `.woff2`
-files from the brand/design team and add them as:
-
-```
-src/SafeShare/wwwroot/fonts/noaGrotesk-Regular.woff2
-src/SafeShare/wwwroot/fonts/noaGrotesk-Medium.woff2
-src/SafeShare/wwwroot/fonts/noaGrotesk-Bold.woff2
-src/SafeShare/wwwroot/fonts/noaSerif-Regular.woff2
-src/SafeShare/wwwroot/fonts/noaSerif-Bold.woff2
-```
-
-They're picked up automatically, with no code change. Until then, labels use a metric-matched Arial
-fallback and headings use Georgia. Inter is bundled (SIL Open Font License, see `wwwroot/fonts/OFL-Inter.txt`).
+**Brand fonts:** noaGrotesk (2.0) and noaSerif (2.0) are licensed to NoA Ignite and are bundled under
+`src/SafeShare/wwwroot/fonts/`. They're not open source — don't reuse these `.woff2` files outside NoA Ignite
+projects. Inter is bundled too (SIL Open Font License, see `wwwroot/fonts/OFL-Inter.txt`) as the secondary
+typeface for small body copy.
 
 ## Requirements: HTTPS
 
